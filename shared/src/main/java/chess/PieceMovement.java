@@ -1,6 +1,10 @@
 package chess;
 
+import java.lang.reflect.Array;
 import java.util.Collection;
+import java.util.HashSet;
+
+import static chess.PieceMovement.Direction.*;
 
 public class PieceMovement {
 
@@ -25,7 +29,7 @@ public class PieceMovement {
             case ROOK:
                 //
             case PAWN:
-                //,
+                //
         }
     }
 
@@ -42,55 +46,66 @@ public class PieceMovement {
 
     protected Collection<ChessMove> iterateMoves(ChessBoard board, ChessPosition startPos,
                                                int maxDistance, Direction[] directions) {
+        //Directions[] and maxDistance provided by subclass calling this method
 
-        //initialize collection
+        Collection<ChessMove> moves = new HashSet<>();
 
         int r = startPos.getRow();
         int c = startPos.getColumn();
         int distanceLeft = maxDistance;
 
-        ChessPosition newPos = new ChessPosition(r, c);
+        ChessPosition curPos = new ChessPosition(r, c);
 
-        for (Direction direction : directions) {
+        for (int i = 0; i < directions.length; i = i) {
 
-            switch(direction) {
+            switch(Array.get(directions, i)) {
                 case UP:
-                    newPos.setRow(newPos.getRow() + 1);
+                    curPos.setRow(curPos.getRow() + 1);
+                    break;
                 case BACK:
-                    newPos.setRow(newPos.getRow() - 1);
+                    curPos.setRow(curPos.getRow() - 1);
+                    break;
                 case LEFT:
-                    newPos.setCol(newPos.getColumn() - 1);
+                    curPos.setCol(curPos.getColumn() - 1);
+                    break;
                 case RIGHT:
-                    newPos.setCol(newPos.getColumn() + 1);
+                    curPos.setCol(curPos.getColumn() + 1);
+                    break;
                 case UPLEFT:
-                    newPos.setRow(newPos.getRow() + 1);
-                    newPos.setCol(newPos.getColumn() - 1);
+                    curPos.setRow(curPos.getRow() + 1);
+                    curPos.setCol(curPos.getColumn() - 1);
+                    break;
                 case UPRIGHT:
-                    newPos.setRow(newPos.getRow() + 1);
-                    newPos.setCol(newPos.getColumn() + 1);
+                    curPos.setRow(curPos.getRow() + 1);
+                    curPos.setCol(curPos.getColumn() + 1);
+                    break;
                 case BACKLEFT:
-                    newPos.setRow(newPos.getRow() - 1);
-                    newPos.setCol(newPos.getColumn() - 1);
+                    curPos.setRow(curPos.getRow() - 1);
+                    curPos.setCol(curPos.getColumn() - 1);
+                    break;
                 case BACKRIGHT:
-                    newPos.setRow(newPos.getRow() - 1);
-                    newPos.setCol(newPos.getColumn() + 1);
+                    curPos.setRow(curPos.getRow() - 1);
+                    curPos.setCol(curPos.getColumn() + 1);
+                    break;
             }
 
-            distanceLeft = distanceLeft - 1;
+            distanceLeft -= 1;
 
-            if (distanceLeft > 0 && board.getPiece(newPos).getPieceType()
+            if (distanceLeft > 0 && board.getPiece(curPos).getPieceType()
                     != board.getPiece(startPos).getPieceType()) {
 
                 //create chessmove and add to collection
+                moves.add(new ChessMove(startPos, curPos));
 
             }
             else {
-                //
+                i = i + 1;
+                distanceLeft = maxDistance;
             }
 
         }
 
-        //return collection
+        return moves;
 
     }
 

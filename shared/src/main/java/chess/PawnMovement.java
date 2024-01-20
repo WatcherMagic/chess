@@ -14,12 +14,6 @@ public class PawnMovement extends PieceMovement{
         super(board, pos);
     }
 
-    @Override
-    protected Collection<ChessMove> iterateMoves(ChessBoard board, ChessPosition startPos,
-                                               int maxDistance, Direction[] directions) {
-        Collection<ChessMove> moves = new HashSet<>();
-
-        return moves;
-    }
+    //@Override
 
 }

@@ -10,6 +10,7 @@ public class PieceMovement {
 
     private ChessBoard board;
     private ChessPosition pos;
+    int distanceLeft;
 
     public PieceMovement(ChessBoard board, ChessPosition pos) {
         this.board = board;
@@ -22,19 +23,25 @@ public class PieceMovement {
             case KING:
                 KingMovement king = new KingMovement(board, position);
                 moves = king.iterateMoves(moves, king.maxDistance, king.directions);
+                break;
             case QUEEN:
                 QueenMovement queen = new QueenMovement(board, position);
                 moves = queen.iterateMoves(moves, queen.maxDistance, queen.directions);
+                break;
             case BISHOP:
                 BishopMovement bishop = new BishopMovement(board, position);
                 moves = bishop.iterateMoves(moves, bishop.maxDistance, bishop.directions);
+                break;
             case KNIGHT:
                 //
+                break;
             case ROOK:
                 RookMovement rook = new RookMovement(board, position);
                 moves = rook.iterateMoves(moves, rook.maxDistance, rook.directions);
+                break;
             case PAWN:
                 //
+                break;
         }
 
         return moves;
@@ -51,8 +58,8 @@ public class PieceMovement {
         BACKRIGHT
     }
 
-    protected boolean colorAtPosIsSame(ChessBoard b, ChessPosition p1, ChessPosition p2) {
-        if (b.getPiece(p1).getTeamColor() != b.getPiece(p2).getTeamColor()) {
+    protected boolean colorAtPosIsSame(ChessBoard b, ChessPosition start, ChessPosition current) {
+        if (b.getPiece(start).getTeamColor() != b.getPiece(current).getTeamColor()) {
             return false;
         }
         else {
@@ -60,10 +67,11 @@ public class PieceMovement {
         }
     }
 
-    protected int checkPosition(int maxDistance, int distanceLeft, int i,
+    protected int checkPosition(int maxDistance, int i,
                                 ChessBoard board, Collection<ChessMove> moves,
                                 ChessPosition startPos, ChessPosition curPos) {
-        distanceLeft -= 1;
+
+        this.distanceLeft -= 1;
 
         //check if adding in pos direction is out of bounds for edge
         if ((curPos.getRow() > 8 || curPos.getRow() < 1)
@@ -71,14 +79,27 @@ public class PieceMovement {
 
             i += 1;
             distanceLeft = maxDistance;
+            curPos.setRow(startPos.getRow());
+            curPos.setCol(startPos.getColumn());
 
         }
         else {
 
-            if (distanceLeft > 0 && !colorAtPosIsSame(board, startPos, curPos)) {
+            if (this.distanceLeft > 0) {
 
-                //create chessmove and add to collection
-                moves.add(new ChessMove(startPos, curPos));
+                if (board.getPiece(curPos) != null) {
+
+                    if (!colorAtPosIsSame(board, startPos, curPos)) {
+                        //create chessmove and add to collection
+                        moves.add(new ChessMove(startPos, curPos));
+                        distanceLeft = 0;
+                    } else {
+                        moves.add(new ChessMove(startPos, curPos));
+                    }
+                }
+                else {
+                    moves.add(new ChessMove(startPos, curPos));
+                }
 
             }
             else {
@@ -97,7 +118,7 @@ public class PieceMovement {
 
         int r = this.pos.getRow();
         int c = this.pos.getColumn();
-        int distanceLeft = maxDistance;
+        this.distanceLeft = maxDistance;
 
         ChessPosition curPos = new ChessPosition(r, c);
 
@@ -106,32 +127,41 @@ public class PieceMovement {
             switch(Array.get(directions, i)) {
                 case UP:
                     curPos.setRow(curPos.getRow() + 1);
-                    i = checkPosition(maxDistance, distanceLeft, i, board, moves, this.pos, curPos);
+                    i = checkPosition(maxDistance, i, board, moves, this.pos, curPos);
+                    break;
                 case BACK:
                     curPos.setRow(curPos.getRow() - 1);
-                    i = checkPosition(maxDistance, distanceLeft, i, board, moves, this.pos, curPos);
+                    i = checkPosition(maxDistance, i, board, moves, this.pos, curPos);
+                    break;
                 case LEFT:
                     curPos.setCol(curPos.getColumn() - 1);
-                    i = checkPosition(maxDistance, distanceLeft, i, board, moves, this.pos, curPos);
+                    i = checkPosition(maxDistance, i, board, moves, this.pos, curPos);
+                    break;
                 case RIGHT:
+                    distanceLeft -= 1;
                     curPos.setCol(curPos.getColumn() + 1);
-                    i = checkPosition(maxDistance, distanceLeft, i, board, moves, this.pos, curPos);
+                    i = checkPosition(maxDistance, i, board, moves, this.pos, curPos);
+                    break;
                 case UPLEFT:
                     curPos.setRow(curPos.getRow() + 1);
                     curPos.setCol(curPos.getColumn() - 1);
-                    i = checkPosition(maxDistance, distanceLeft, i, board, moves, this.pos, curPos);
+                    i = checkPosition(maxDistance, i, board, moves, this.pos, curPos);
+                    break;
                 case UPRIGHT:
                     curPos.setRow(curPos.getRow() + 1);
                     curPos.setCol(curPos.getColumn() + 1);
-                    i = checkPosition(maxDistance, distanceLeft, i, board, moves, this.pos, curPos);
+                    i = checkPosition(maxDistance, i, board, moves, this.pos, curPos);
+                    break;
                 case BACKLEFT:
                     curPos.setRow(curPos.getRow() - 1);
                     curPos.setCol(curPos.getColumn() - 1);
-                    i = checkPosition(maxDistance, distanceLeft, i, board, moves, this.pos, curPos);
+                    i = checkPosition(maxDistance, i, board, moves, this.pos, curPos);
+                    break;
                 case BACKRIGHT:
                     curPos.setRow(curPos.getRow() - 1);
                     curPos.setCol(curPos.getColumn() + 1);
-                    i = checkPosition(maxDistance, distanceLeft, i, board, moves, this.pos, curPos);
+                    i = checkPosition(maxDistance, i, board, moves, this.pos, curPos);
+                    break;
                 default:
                     throw new IllegalStateException("Unexpected value: " + Array.get(directions, i));
             }

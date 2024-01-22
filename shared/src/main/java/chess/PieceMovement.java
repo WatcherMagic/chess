@@ -91,14 +91,14 @@ public class PieceMovement {
 
                     if (!colorAtPosIsSame(board, startPos, curPos)) {
                         //create chessmove and add to collection
-                        moves.add(new ChessMove(startPos, curPos));
+                        moves.add(new ChessMove(startPos, new ChessPosition(curPos.getRow(), curPos.getColumn())));
                         distanceLeft = 0;
                     } else {
-                        moves.add(new ChessMove(startPos, curPos));
+                        moves.add(new ChessMove(startPos, new ChessPosition(curPos.getRow(), curPos.getColumn())));
                     }
                 }
                 else {
-                    moves.add(new ChessMove(startPos, curPos));
+                    moves.add(new ChessMove(startPos, new ChessPosition(curPos.getRow(), curPos.getColumn())));
                 }
 
             }

@@ -10,4 +10,5 @@ public class KingMovement extends PieceMovement{
     public KingMovement(ChessBoard board, ChessPosition pos) {
         super(board, pos);
     }
+
 }

@@ -9,8 +9,8 @@ import static chess.ChessPiece.PieceType.*;
 
 public class PawnMovement extends PieceMovement {
 
-    Direction[] directionsWhite = {UPLEFT, UPRIGHT, UP};
-    Direction[] directionsBlack = {BACKLEFT, BACKRIGHT, BACK};
+    Direction[] directionsWhite = {UP, UPLEFT, UPRIGHT};
+    Direction[] directionsBlack = {BACK, BACKLEFT, BACKRIGHT};
     Direction[] directions;
     int maxDistance = 1;
 
@@ -20,10 +20,10 @@ public class PawnMovement extends PieceMovement {
 
     private void isPromotion(Collection<ChessMove> moves, ChessPosition endPos,
                                   ChessPosition startPos) {
-        moves.add(new ChessMove(startPos, endPos, QUEEN));
-        moves.add(new ChessMove(startPos, endPos, BISHOP));
-        moves.add(new ChessMove(startPos, endPos, ROOK));
-        moves.add(new ChessMove(startPos, endPos, KNIGHT));
+        moves.add(new ChessMove(startPos, new ChessPosition(endPos.getRow(), endPos.getColumn()), ROOK));
+        moves.add(new ChessMove(startPos, new ChessPosition(endPos.getRow(), endPos.getColumn()), QUEEN));
+        moves.add(new ChessMove(startPos, new ChessPosition(endPos.getRow(), endPos.getColumn()), BISHOP));
+        moves.add(new ChessMove(startPos, new ChessPosition(endPos.getRow(), endPos.getColumn()), KNIGHT));
     }
 
     private int pawnDiagonalMove(int i, ChessBoard board, Collection<ChessMove> moves,
@@ -40,10 +40,15 @@ public class PawnMovement extends PieceMovement {
             }
         }
 
-        curPos.setRow(startPos.getRow());
-        curPos.setCol(startPos.getColumn());
+        resetPos(curPos, startPos);
+
         i += 1;
         return i;
+    }
+
+    private void resetPos(ChessPosition curPos, ChessPosition startPos) {
+        curPos.setRow(startPos.getRow());
+        curPos.setCol(startPos.getColumn());
     }
 
     private int pawnVerticalMove(int distance, int i, ChessBoard board, Collection<ChessMove> moves,
@@ -51,19 +56,27 @@ public class PawnMovement extends PieceMovement {
 
         if (board.getPiece(curPos) == null) {
             if (curPos.getRow() == 1 || curPos.getRow() == 8) {
-                isPromotion(moves, startPos, curPos);
+                isPromotion(moves, curPos, startPos);
             } else {
                 moves.add(new ChessMove(startPos, new ChessPosition(curPos.getRow(), curPos.getColumn())));
             }
         }
 
-        if ((startPos.getRow() == 2 || startPos.getRow() == 7) && distance > 0) {
-            curPos.setRow(curPos.getRow() + 1);
-            pawnVerticalMove(distance - 1, i, board, moves, startPos, curPos);
+        if ((startPos.getRow() == 2 && board.getPiece(this.pos).getTeamColor() == WHITE) ||
+                (startPos.getRow() == 7 && board.getPiece(this.pos).getTeamColor() == BLACK)) {
+
+            if (moves.size() > 0 && distance > 0) {
+                if (board.getPiece(this.pos).getTeamColor() == WHITE) {
+                    curPos.setRow(curPos.getRow() + 1);
+                }
+                else {
+                    curPos.setRow(curPos.getRow() - 1);
+                }
+                pawnVerticalMove(distance - 1, i, board, moves, startPos, curPos);
+            }
         }
 
-        curPos.setRow(startPos.getRow());
-        curPos.setCol(startPos.getColumn());
+        resetPos(curPos, startPos);
 
         i +=1;
         return i;
@@ -80,7 +93,7 @@ public class PawnMovement extends PieceMovement {
 
         ChessPosition curPos = new ChessPosition(r, c);
 
-        if (board.getPiece(this.pos).getTeamColor() == WHITE) {
+        if (board.getPiece(curPos).getTeamColor() == WHITE) {
             directions = this.directionsWhite;
         }
         else {

@@ -39,6 +39,14 @@ public class ChessPosition {
         this.col = colNum;
     }
 
+    @Override
+    public String toString() {
+        return "ChessPosition{" +
+                "row=" + row +
+                ", col=" + col +
+                '}';
+    }
+
     /**
      * @return which row this position is in
      * 1 codes for the bottom row

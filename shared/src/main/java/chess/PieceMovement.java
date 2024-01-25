@@ -33,7 +33,8 @@ public class PieceMovement {
                 moves = bishop.iterateMoves(moves, bishop.maxDistance, bishop.directions);
                 break;
             case KNIGHT:
-                //
+                KnightMovement knight = new KnightMovement(board, position);
+                moves = knight.iterateMoves(moves, 0, knight.directions);
                 break;
             case ROOK:
                 RookMovement rook = new RookMovement(board, position);

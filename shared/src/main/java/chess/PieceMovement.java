@@ -77,7 +77,8 @@ public class PieceMovement {
 
         //check if adding in pos direction is out of bounds for edge
         if ((curPos.getRow() > 8 || curPos.getRow() < 1)
-                || (curPos.getColumn() > 8 || curPos.getColumn() < 1)) {
+                || (curPos.getColumn() > 8 || curPos.getColumn() < 1)
+                || this.distanceLeft < 0) {
 
             i += 1;
             distanceLeft = maxDistance;
@@ -87,18 +88,20 @@ public class PieceMovement {
         }
         else {
 
-            if (this.distanceLeft > 0) {
+            if (this.distanceLeft >= 0) {
 
                 if (board.getPiece(curPos) != null) {
 
                     if (!colorAtPosIsSame(board, startPos, curPos)) { //capture enemy
                         moves.add(new ChessMove(startPos, new ChessPosition(curPos.getRow(), curPos.getColumn())));
                         i += 1;
+                        distanceLeft = maxDistance;
                         curPos.setRow(startPos.getRow());
                         curPos.setCol(startPos.getColumn());
                     }
                     else { //blocked
                         i += 1;
+                        distanceLeft = maxDistance;
                         curPos.setRow(startPos.getRow());
                         curPos.setCol(startPos.getColumn());
                     }
@@ -110,6 +113,7 @@ public class PieceMovement {
             }
             else {
                 i += 1;
+                distanceLeft = maxDistance;
             }
 
         }

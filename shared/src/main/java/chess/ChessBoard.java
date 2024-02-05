@@ -38,11 +38,78 @@ public class ChessBoard {
     }
 
     public void removePiece(ChessPosition position) {
-        board[position.getRow()][position.getColumn()] = null;
+        board[position.getRow()-1][position.getColumn()-1] = null;
     }
 
     public int getBoardLength() {
         return board.length;
+    }
+
+    @Override
+    public String toString() {
+        String chessBoard = "";
+        ChessPosition pos = new ChessPosition(0,0);
+
+        for (int x = 1; x <= getBoardLength(); x++) {
+            chessBoard = chessBoard.concat("|");
+            for (int y = 1; y <= getBoardLength(); y++) {
+                pos.setRow(x);
+                pos.setCol(y);
+
+                if (getPiece(pos) == null) {
+                    chessBoard = chessBoard.concat(" |");
+                }
+                else {
+                    if (getPiece(pos).getTeamColor() == ChessGame.TeamColor.WHITE) {
+                        switch(getPiece(pos).getPieceType()) {
+                            case KING:
+                                chessBoard = chessBoard.concat("K|");
+                                break;
+                            case QUEEN:
+                                chessBoard = chessBoard.concat("Q|");
+                                break;
+                            case BISHOP:
+                                chessBoard = chessBoard.concat("B|");
+                                break;
+                            case ROOK:
+                                chessBoard = chessBoard.concat("R|");
+                                break;
+                            case KNIGHT:
+                                chessBoard = chessBoard.concat("N|");
+                                break;
+                            case PAWN:
+                                chessBoard = chessBoard.concat("P|");
+                                break;
+                        }
+                    }
+                    else {
+                        switch(getPiece(pos).getPieceType()) {
+                            case KING:
+                                chessBoard = chessBoard.concat("k|");
+                                break;
+                            case QUEEN:
+                                chessBoard = chessBoard.concat("q|");
+                                break;
+                            case BISHOP:
+                                chessBoard = chessBoard.concat("b|");
+                                break;
+                            case ROOK:
+                                chessBoard = chessBoard.concat("r|");
+                                break;
+                            case KNIGHT:
+                                chessBoard = chessBoard.concat("n|");
+                                break;
+                            case PAWN:
+                                chessBoard = chessBoard.concat("p|");
+                                break;
+                        }
+                    }
+                }
+            }
+            chessBoard = chessBoard.concat("\n");
+        }
+
+        return chessBoard;
     }
 
     @Override

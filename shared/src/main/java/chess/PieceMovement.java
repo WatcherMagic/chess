@@ -2,52 +2,14 @@ package chess;
 
 import java.lang.reflect.Array;
 import java.util.Collection;
-import java.util.HashSet;
 
 import static chess.PieceMovement.Direction.*;
 
 public class PieceMovement {
 
-    protected ChessBoard board;
-    protected ChessPosition pos;
-    int distanceLeft;
+    protected ChessPosition curPos;
 
-    public PieceMovement(ChessBoard board, ChessPosition pos) {
-        this.board = board;
-        this.pos = pos;
-    }
-
-    private Collection<ChessMove> getMovementType(Collection<ChessMove> moves, ChessBoard board, ChessPosition position) {
-
-        switch (this.board.getPiece(this.pos).getPieceType()) {
-            case KING:
-                KingMovement king = new KingMovement(board, position);
-                moves = king.iterateMoves(moves, king.maxDistance, king.directions);
-                break;
-            case QUEEN:
-                QueenMovement queen = new QueenMovement(board, position);
-                moves = queen.iterateMoves(moves, queen.maxDistance, queen.directions);
-                break;
-            case BISHOP:
-                BishopMovement bishop = new BishopMovement(board, position);
-                moves = bishop.iterateMoves(moves, bishop.maxDistance, bishop.directions);
-                break;
-            case KNIGHT:
-                KnightMovement knight = new KnightMovement(board, position);
-                moves = knight.iterateMoves(moves, 0, knight.directions);
-                break;
-            case ROOK:
-                RookMovement rook = new RookMovement(board, position);
-                moves = rook.iterateMoves(moves, rook.maxDistance, rook.directions);
-                break;
-            case PAWN:
-                PawnMovement pawn = new PawnMovement(board, position);
-                moves = pawn.iterateMoves(moves, pawn.maxDistance, pawn.directions);
-                break;
-        }
-
-        return moves;
-    }
+    PieceMovement() {}
 
     protected enum Direction {
         UP,
@@ -60,134 +22,88 @@ public class PieceMovement {
         BACKRIGHT
     }
 
-    protected boolean colorAtPosIsSame(ChessBoard b, ChessPosition start, ChessPosition current) {
-        if (b.getPiece(start).getTeamColor() != b.getPiece(current).getTeamColor()) {
-            return false;
-        }
-        else {
-            return true;
-        }
+    protected int resetIteration(ChessPosition pos, ChessPosition resetTo, int i) {
+        pos.setRow(resetTo.getRow());
+        pos.setCol(resetTo.getColumn());
+        i += 1;
+
+        return i;
     }
 
-    protected int checkPosition(int maxDistance, int i,
-                                ChessBoard board, Collection<ChessMove> moves,
-                                ChessPosition startPos, ChessPosition curPos) {
+    protected int checkPosition(Collection<ChessMove> moves, ChessBoard board,
+                                ChessPosition startPos, int i) {
 
-        this.distanceLeft -= 1;
-
-        //check if adding in pos direction is out of bounds for edge
-        if ((curPos.getRow() > 8 || curPos.getRow() < 1)
-                || (curPos.getColumn() > 8 || curPos.getColumn() < 1)
-                || this.distanceLeft < 0) {
-
-            i += 1;
-            distanceLeft = maxDistance;
-            curPos.setRow(startPos.getRow());
-            curPos.setCol(startPos.getColumn());
-
+        if (curPos.getRow() > 8 || curPos.getRow() < 1
+                || curPos.getColumn() > 8 || curPos.getColumn() < 1) {
+            i = resetIteration(curPos, startPos, i);
         }
-        else {
-
-            if (this.distanceLeft >= 0) {
-
-                if (board.getPiece(curPos) != null) {
-
-                    if (!colorAtPosIsSame(board, startPos, curPos)) { //capture enemy
-                        moves.add(new ChessMove(startPos, new ChessPosition(curPos.getRow(), curPos.getColumn())));
-                        i += 1;
-                        distanceLeft = maxDistance;
-                        curPos.setRow(startPos.getRow());
-                        curPos.setCol(startPos.getColumn());
-                    }
-                    else { //blocked
-                        i += 1;
-                        distanceLeft = maxDistance;
-                        curPos.setRow(startPos.getRow());
-                        curPos.setCol(startPos.getColumn());
-                    }
-                }
-                else {
-                    moves.add(new ChessMove(startPos, new ChessPosition(curPos.getRow(), curPos.getColumn())));
-                }
-
+        else if (board.getPiece(curPos) != null) {
+            //blocked
+            if (board.getPiece(curPos).getTeamColor() == board.getPiece(startPos).getTeamColor()) {
+                i = resetIteration(curPos, startPos, i);
             }
+            //capture piece
             else {
-                i += 1;
-                distanceLeft = maxDistance;
+                moves.add(new ChessMove(startPos, new ChessPosition(curPos.getRow(), curPos.getColumn())));
+                i = resetIteration(curPos, startPos, i);
             }
-
+        }
+        //empty space
+        else {
+            moves.add(new ChessMove(startPos, new ChessPosition(curPos.getRow(), curPos.getColumn())));
         }
 
         return i;
     }
 
-    protected Collection<ChessMove> iterateMoves(Collection<ChessMove> moves, int maxDistance,
-                                                 Direction[] directions) {
-        //Directions[] and maxDistance provided by subclass calling this method
+    public Collection<ChessMove> iterateMoves(Collection<ChessMove> moves, ChessBoard board,
+                                              ChessPosition startPos, Direction[] directions) {
 
-        int r = this.pos.getRow();
-        int c = this.pos.getColumn();
-        this.distanceLeft = maxDistance;
+        curPos = new ChessPosition(startPos.getRow(), startPos.getColumn());
 
-        ChessPosition curPos = new ChessPosition(r, c);
-
-        for (int i = 0; i < directions.length; i = i) {
-
-            switch(Array.get(directions, i)) {
+        for (int x = 0; x < directions.length; x = x) {
+            switch(Array.get(directions, x)) {
                 case UP:
-                    curPos.setRow(curPos.getRow() + 1);
-                    i = checkPosition(maxDistance, i, board, moves, this.pos, curPos);
+                    curPos.setRow(curPos.getRow()+1);
+                    x = checkPosition(moves, board, startPos, x);
                     break;
                 case BACK:
-                    curPos.setRow(curPos.getRow() - 1);
-                    i = checkPosition(maxDistance, i, board, moves, this.pos, curPos);
+                    curPos.setRow(curPos.getRow()-1);
+                    x = checkPosition(moves, board, startPos, x);
                     break;
                 case LEFT:
-                    curPos.setCol(curPos.getColumn() - 1);
-                    i = checkPosition(maxDistance, i, board, moves, this.pos, curPos);
+                    curPos.setCol(curPos.getColumn()-1);
+                    x = checkPosition(moves, board, startPos, x);
                     break;
                 case RIGHT:
-                    curPos.setCol(curPos.getColumn() + 1);
-                    i = checkPosition(maxDistance, i, board, moves, this.pos, curPos);
+                    curPos.setCol(curPos.getColumn()+1);
+                    x = checkPosition(moves, board, startPos, x);
                     break;
                 case UPLEFT:
-                    curPos.setRow(curPos.getRow() + 1);
-                    curPos.setCol(curPos.getColumn() - 1);
-                    i = checkPosition(maxDistance, i, board, moves, this.pos, curPos);
+                    curPos.setRow(curPos.getRow()+1);
+                    curPos.setCol(curPos.getColumn()-1);
+                    x = checkPosition(moves, board, startPos, x);
                     break;
                 case UPRIGHT:
-                    curPos.setRow(curPos.getRow() + 1);
-                    curPos.setCol(curPos.getColumn() + 1);
-                    i = checkPosition(maxDistance, i, board, moves, this.pos, curPos);
+                    curPos.setRow(curPos.getRow()+1);
+                    curPos.setCol(curPos.getColumn()+1);
+                    x = checkPosition(moves, board, startPos, x);
                     break;
                 case BACKLEFT:
-                    curPos.setRow(curPos.getRow() - 1);
-                    curPos.setCol(curPos.getColumn() - 1);
-                    i = checkPosition(maxDistance, i, board, moves, this.pos, curPos);
+                    curPos.setRow(curPos.getRow()-1);
+                    curPos.setCol(curPos.getColumn()-1);
+                    x = checkPosition(moves, board, startPos, x);
                     break;
                 case BACKRIGHT:
-                    curPos.setRow(curPos.getRow() - 1);
-                    curPos.setCol(curPos.getColumn() + 1);
-                    i = checkPosition(maxDistance, i, board, moves, this.pos, curPos);
+                    curPos.setRow(curPos.getRow()-1);
+                    curPos.setCol(curPos.getColumn()+1);
+                    x = checkPosition(moves, board, startPos, x);
                     break;
                 default:
-                    throw new IllegalStateException("Unexpected value: " + Array.get(directions, i));
+                    throw new IllegalStateException("Unexpected value: " + Array.get(directions, x));
             }
-
         }
 
         return moves;
-
     }
-
-    public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-
-        Collection<ChessMove> moves = new HashSet<>();
-
-        moves = getMovementType(moves, board, myPosition);
-
-        return moves;
-
-    }
-
 }

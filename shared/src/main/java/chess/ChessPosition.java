@@ -10,41 +10,41 @@ import java.util.Objects;
  */
 public class ChessPosition {
 
-    private int row;
-    private int col;
+    private int r;
+    private int c;
+
+    public ChessPosition(int row, int col) {
+        r = row;
+        c = col;
+    }
+
+    public void setRow(int r) {
+        this.r = r;
+    }
+
+    public void setCol(int c) {
+        this.c = c;
+    }
+
+    @Override
+    public String toString() {
+        return "ChessPosition{" +
+                "r=" + r +
+                ", c=" + c +
+                '}';
+    }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ChessPosition that = (ChessPosition) o;
-        return row == that.row && col == that.col;
+        return r == that.r && c == that.c;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(row, col);
-    }
-
-    public ChessPosition(int row, int col) {
-        this.row = row;
-        this.col = col;
-    }
-
-    public void setRow(int rowNum) {
-        this.row = rowNum;
-    }
-
-    public void setCol(int colNum) {
-        this.col = colNum;
-    }
-
-    @Override
-    public String toString() {
-        return "ChessPosition{" +
-                "row=" + row +
-                ", col=" + col +
-                '}';
+        return Objects.hash(r, c);
     }
 
     /**
@@ -52,7 +52,7 @@ public class ChessPosition {
      * 1 codes for the bottom row
      */
     public int getRow() {
-        return this.row;
+        return r;
     }
 
     /**
@@ -60,6 +60,6 @@ public class ChessPosition {
      * 1 codes for the left row
      */
     public int getColumn() {
-        return this.col;
+        return c;
     }
 }

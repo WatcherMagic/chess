@@ -2,55 +2,35 @@ package chess;
 
 import java.lang.reflect.Array;
 import java.util.Collection;
-import java.util.HashSet;
 
-public class KnightMovement extends PieceMovement{
+import static chess.PieceMovement.Direction.*;
 
-    Direction[] directions;
+public class KnightMovement extends PieceMovement {
 
-    public KnightMovement(ChessBoard board, ChessPosition pos) {
-        super(board, pos);
+
+    KnightMovement() {
+        super();
     }
 
-    @Override
-    protected Collection<ChessMove> iterateMoves(Collection<ChessMove> moves, int maxDistance,
-                                                 Direction[] directions) {
-        //Directions[] and maxDistance provided by subclass calling this method
+    public Collection<ChessMove> iterateMoves(Collection<ChessMove> moves, ChessBoard board,
+                                              ChessPosition startPos) {
 
-        int r = this.pos.getRow();
-        int c = this.pos.getColumn();
+        curPos = new ChessPosition(startPos.getRow(), startPos.getColumn());
 
-        ChessPosition startPos = new ChessPosition(r, c);
+        ChessPosition[] positions = {
+            new ChessPosition(curPos.getRow()+2, curPos.getColumn()+1),
+            new ChessPosition(curPos.getRow()+1, curPos.getColumn()+2),
+            new ChessPosition(curPos.getRow()-1, curPos.getColumn()+2),
+            new ChessPosition(curPos.getRow()-2, curPos.getColumn()+1),
+            new ChessPosition(curPos.getRow()-2, curPos.getColumn()-1),
+            new ChessPosition(curPos.getRow()-1, curPos.getColumn()-2),
+            new ChessPosition(curPos.getRow()+1, curPos.getColumn()-2),
+            new ChessPosition(curPos.getRow()+2, curPos.getColumn()-1)
+        };
 
-        ChessPosition[] possibleMoves = {
-                new ChessPosition(r+2, c+1),
-                new ChessPosition(r+2, c-1),
-                new ChessPosition(r-2, c-1),
-                new ChessPosition(r-2, c+1),
-                new ChessPosition(r+1, c+2),
-                new ChessPosition(r-1, c+2),
-                new ChessPosition(r-1, c-2),
-                new ChessPosition(r+1, c-2)};
-
-        for (int i = 0; i < possibleMoves.length; i++) {
-
-            ChessPosition curPos = (ChessPosition) Array.get(possibleMoves, i);
-
-            if ((curPos.getRow() > 8 || curPos.getRow() < 1)
-                    || (curPos.getColumn() > 8 || curPos.getColumn() < 1)) {
-                continue;
-            }
-
-            if (board.getPiece(curPos) != null) {
-                if (board.getPiece(curPos).getTeamColor() !=
-                        board.getPiece(startPos).getTeamColor()) {
-
-                    moves.add(new ChessMove(startPos, new ChessPosition(curPos.getRow(), curPos.getColumn())));
-                }
-            }
-            else {
-                moves.add(new ChessMove(startPos, new ChessPosition(curPos.getRow(), curPos.getColumn())));
-            }
+        for (int i = 0; i < positions.length; i++) {
+            curPos = positions[i];
+            checkPosition(moves, board, startPos, i);
         }
 
         return moves;

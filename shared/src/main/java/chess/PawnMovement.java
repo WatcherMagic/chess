@@ -4,141 +4,179 @@ import java.lang.reflect.Array;
 import java.util.Collection;
 
 import static chess.ChessGame.TeamColor.*;
-import static chess.PieceMovement.Direction.*;
 import static chess.ChessPiece.PieceType.*;
+import static chess.PieceMovement.Direction.*;
 
 public class PawnMovement extends PieceMovement {
 
-    Direction[] directionsWhite = {UP, UPLEFT, UPRIGHT};
+
     Direction[] directionsBlack = {BACK, BACKLEFT, BACKRIGHT};
-    Direction[] directions;
+    Direction[] directionsWhite = {UP, UPLEFT, UPRIGHT};
     int maxDistance = 1;
 
-    public PawnMovement(ChessBoard board, ChessPosition pos) {
-        super(board, pos);
+    PawnMovement() {
+        super();
     }
 
-    private void isPromotion(Collection<ChessMove> moves, ChessPosition endPos,
-                                  ChessPosition startPos) {
-        moves.add(new ChessMove(startPos, new ChessPosition(endPos.getRow(), endPos.getColumn()), ROOK));
+    Direction[] getDirectionsBlack() {
+        return directionsBlack;
+    }
+
+    Direction[] getDirectionsWhite() {
+        return directionsWhite;
+    }
+
+    private void promote(Collection<ChessMove> moves, ChessPosition startPos,
+                              ChessPosition endPos) {
         moves.add(new ChessMove(startPos, new ChessPosition(endPos.getRow(), endPos.getColumn()), QUEEN));
         moves.add(new ChessMove(startPos, new ChessPosition(endPos.getRow(), endPos.getColumn()), BISHOP));
+        moves.add(new ChessMove(startPos, new ChessPosition(endPos.getRow(), endPos.getColumn()), ROOK));
         moves.add(new ChessMove(startPos, new ChessPosition(endPos.getRow(), endPos.getColumn()), KNIGHT));
     }
 
-    private int pawnDiagonalMove(int i, ChessBoard board, Collection<ChessMove> moves,
-                                 ChessPosition startPos, ChessPosition curPos) {
+    private boolean checkPromotion(Collection<ChessMove> moves, ChessPosition pos,
+                                ChessPosition startPos, ChessGame.TeamColor color) {
+        if (color == BLACK && pos.getRow() == 1) {
+            promote(moves, startPos, pos);
+            return true;
+        }
+        else if (color == WHITE && pos.getRow() == 8) {
+            promote(moves, startPos, pos);
+            return true;
+        }
+        return false;
+    }
+
+    private boolean checkOffBoard(ChessPosition pos) {
+        if (pos.getRow() > 8 || pos.getColumn() > 8
+                || pos.getRow() < 1 || pos.getColumn() < 1) {
+            return true;
+        }
+        return false;
+    }
+
+    private int checkPosDiagonal(Collection<ChessMove> moves, ChessBoard board,
+                                  ChessPosition startPos, int i) {
+
+        if (checkOffBoard(curPos)) {
+            i += 1;
+            return i;
+        }
+
+        ChessGame.TeamColor color = board.getPiece(startPos).getTeamColor();
 
         if (board.getPiece(curPos) != null) {
-
-            if (!colorAtPosIsSame(board, startPos, curPos)) { //capture enemy
-                if (curPos.getRow() == 1 || curPos.getRow() == 8) {
-                    isPromotion(moves, curPos, startPos);
-                } else {
+            if (curPos.getRow() > startPos.getRow() && color == WHITE
+                    && board.getPiece(curPos).getTeamColor() != WHITE) {
+                if (!checkPromotion(moves, new ChessPosition(curPos.getRow(), curPos.getColumn()), startPos, color)) {
+                    moves.add(new ChessMove(startPos, new ChessPosition(curPos.getRow(), curPos.getColumn())));
+                }
+            }
+            else if (curPos.getRow() < startPos.getRow() && color == BLACK
+                    && board.getPiece(curPos).getTeamColor() != BLACK) {
+                if (!checkPromotion(moves, new ChessPosition(curPos.getRow(), curPos.getColumn()), startPos, color)) {
                     moves.add(new ChessMove(startPos, new ChessPosition(curPos.getRow(), curPos.getColumn())));
                 }
             }
         }
 
-        resetPos(curPos, startPos);
-
         i += 1;
         return i;
     }
 
-    private void resetPos(ChessPosition curPos, ChessPosition startPos) {
-        curPos.setRow(startPos.getRow());
-        curPos.setCol(startPos.getColumn());
-    }
+    private int checkPosStraight(Collection<ChessMove> moves, ChessBoard board,
+                                 ChessPosition startPos, int i, int dist) {
 
-    private int pawnVerticalMove(int distance, int i, ChessBoard board, Collection<ChessMove> moves,
-                                 ChessPosition startPos, ChessPosition curPos) {
+        if (checkOffBoard(curPos)) {
+            i += 1;
+            return i;
+        }
 
-        if (board.getPiece(curPos) == null) {
-            if (curPos.getRow() == 1 || curPos.getRow() == 8) {
-                isPromotion(moves, curPos, startPos);
-            } else {
+        if (board.getPiece(curPos) == null && dist > 0) { //clear space
+            if (!checkPromotion(moves, new ChessPosition(curPos.getRow(), curPos.getColumn()),
+                    startPos, board.getPiece(startPos).getTeamColor())) {
                 moves.add(new ChessMove(startPos, new ChessPosition(curPos.getRow(), curPos.getColumn())));
+                if (dist == 1) {
+                    i += 1;
+                }
+            }
+            else {
+                i += 1;
             }
         }
-
-        if ((startPos.getRow() == 2 && board.getPiece(this.pos).getTeamColor() == WHITE) ||
-                (startPos.getRow() == 7 && board.getPiece(this.pos).getTeamColor() == BLACK)) {
-
-            if (moves.size() > 0 && distance > 0) {
-                if (board.getPiece(this.pos).getTeamColor() == WHITE) {
-                    curPos.setRow(curPos.getRow() + 1);
-                }
-                else {
-                    curPos.setRow(curPos.getRow() - 1);
-                }
-                pawnVerticalMove(distance - 1, i, board, moves, startPos, curPos);
-            }
+        else { //blocked
+            i += 1;
         }
 
-        resetPos(curPos, startPos);
-
-        i +=1;
         return i;
-
     }
 
     @Override
-    protected Collection<ChessMove> iterateMoves(Collection<ChessMove> moves, int maxDistance,
-                                                 Direction[] directions) {
+    public Collection<ChessMove> iterateMoves(Collection<ChessMove> moves, ChessBoard board,
+                                              ChessPosition startPos, Direction[] directions) {
 
-        int r = this.pos.getRow();
-        int c = this.pos.getColumn();
+        curPos = new ChessPosition(startPos.getRow(), startPos.getColumn());
         int distance = maxDistance;
 
-        ChessPosition curPos = new ChessPosition(r, c);
-
-        if (board.getPiece(curPos).getTeamColor() == WHITE) {
-            directions = this.directionsWhite;
+        if (startPos.getRow() == 2 && board.getPiece(startPos).getTeamColor() == WHITE) {
+            distance += 1;
         }
-        else {
-            directions = this.directionsBlack;
+        else if (startPos.getRow() == 7 && board.getPiece(startPos).getTeamColor() == BLACK) {
+            distance += 1;
         }
 
-        for (int i = 0; i < directions.length; i = i) {
+        for (int x = 0; x < directions.length; x = x) {
 
-            switch(Array.get(directions, i)) {
+            curPos.setRow(startPos.getRow());
+            curPos.setCol(startPos.getColumn());
+
+            switch(Array.get(directions, x)) {
                 case UP:
-                    curPos.setRow(curPos.getRow() + 1);
-                    i = pawnVerticalMove(distance, i, board, moves, this.pos, curPos);
+                    while (distance > 0) {
+                        curPos.setRow(curPos.getRow()+1);
+                        x = checkPosStraight(moves, board, startPos, x, distance);
+                        if (distance > 1 && moves.size() == 0) { //double move blocked
+                            distance -= 1;
+                        }
+                        distance -= 1;
+                    }
                     break;
                 case BACK:
-                    curPos.setRow(curPos.getRow() - 1);
-                    i = pawnVerticalMove(distance, i, board, moves, this.pos, curPos);
+                    while (distance > 0) {
+                        curPos.setRow(curPos.getRow()-1);
+                        x = checkPosStraight(moves, board, startPos, x, distance);
+                        if (distance > 1 && moves.size() == 0) { //double move blocked
+                            distance -= 1;
+                        }
+                        distance -= 1;
+                    }
                     break;
                 case UPLEFT:
-                    curPos.setRow(curPos.getRow() + 1);
-                    curPos.setCol(curPos.getColumn() - 1);
-                    i = pawnDiagonalMove(i, board, moves, this.pos, curPos);
+                    curPos.setRow(curPos.getRow()+1);
+                    curPos.setCol(curPos.getColumn()-1);
+                    x = checkPosDiagonal(moves, board, startPos, x);
                     break;
                 case UPRIGHT:
-                    curPos.setRow(curPos.getRow() + 1);
-                    curPos.setCol(curPos.getColumn() + 1);
-                    i = pawnDiagonalMove(i, board, moves, this.pos, curPos);
+                    curPos.setRow(curPos.getRow()+1);
+                    curPos.setCol(curPos.getColumn()+1);
+                    x = checkPosDiagonal(moves, board, startPos, x);
                     break;
                 case BACKLEFT:
-                    curPos.setRow(curPos.getRow() - 1);
-                    curPos.setCol(curPos.getColumn() - 1);
-                    i = pawnDiagonalMove(i, board, moves, this.pos, curPos);
+                    curPos.setRow(curPos.getRow()-1);
+                    curPos.setCol(curPos.getColumn()-1);
+                    x = checkPosDiagonal(moves, board, startPos, x);
                     break;
                 case BACKRIGHT:
-                    curPos.setRow(curPos.getRow() - 1);
-                    curPos.setCol(curPos.getColumn() + 1);
-                    i = pawnDiagonalMove(i, board, moves, this.pos, curPos);
+                    curPos.setRow(curPos.getRow()-1);
+                    curPos.setCol(curPos.getColumn()+1);
+                    x = checkPosDiagonal(moves, board, startPos, x);
                     break;
                 default:
-                    throw new IllegalStateException("Unexpected value: " + Array.get(directions, i));
+                    throw new IllegalStateException("Unexpected value: " + Array.get(directions, x));
             }
-
         }
 
         return moves;
-
     }
 
 }

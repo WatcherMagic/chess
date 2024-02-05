@@ -72,11 +72,11 @@ public class ChessGame {
 
         //here run the valid moves through for check
         for (ChessMove move : valid) {
-            //doMove(move);
+            doMove(move);
             if (!isInCheck(color)) {
                 finalValid.add(move);
             }
-            //undoMove(move); //******
+            undoMove(move);
         }
 
         return finalValid;
@@ -90,6 +90,9 @@ public class ChessGame {
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
 
+//        if (mainBoard.getPiece(move.getStartPosition()) != null) {
+//
+//        }
         if (mainBoard.getPiece(move.getStartPosition()).getTeamColor() == getTeamTurn()) {
             Collection<ChessMove> valid = validMoves(move.getStartPosition());
 

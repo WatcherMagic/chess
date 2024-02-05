@@ -48,65 +48,67 @@ public class ChessBoard {
     @Override
     public String toString() {
         String chessBoard = "";
+        String line = "";
         ChessPosition pos = new ChessPosition(0,0);
 
         for (int x = 1; x <= getBoardLength(); x++) {
-            chessBoard = chessBoard.concat("|");
+            line = line.concat("|");
             for (int y = 1; y <= getBoardLength(); y++) {
                 pos.setRow(x);
                 pos.setCol(y);
 
                 if (getPiece(pos) == null) {
-                    chessBoard = chessBoard.concat(" |");
+                    line = line.concat(" |");
                 }
                 else {
                     if (getPiece(pos).getTeamColor() == ChessGame.TeamColor.WHITE) {
                         switch(getPiece(pos).getPieceType()) {
                             case KING:
-                                chessBoard = chessBoard.concat("K|");
+                                line = line.concat("K|");
                                 break;
                             case QUEEN:
-                                chessBoard = chessBoard.concat("Q|");
+                                line = line.concat("Q|");
                                 break;
                             case BISHOP:
-                                chessBoard = chessBoard.concat("B|");
+                                line = line.concat("B|");
                                 break;
                             case ROOK:
-                                chessBoard = chessBoard.concat("R|");
+                                line = line.concat("R|");
                                 break;
                             case KNIGHT:
-                                chessBoard = chessBoard.concat("N|");
+                                line = line.concat("N|");
                                 break;
                             case PAWN:
-                                chessBoard = chessBoard.concat("P|");
+                                line = line.concat("P|");
                                 break;
                         }
                     }
                     else {
                         switch(getPiece(pos).getPieceType()) {
                             case KING:
-                                chessBoard = chessBoard.concat("k|");
+                                line = line.concat("k|");
                                 break;
                             case QUEEN:
-                                chessBoard = chessBoard.concat("q|");
+                                line = line.concat("q|");
                                 break;
                             case BISHOP:
-                                chessBoard = chessBoard.concat("b|");
+                                line = line.concat("b|");
                                 break;
                             case ROOK:
-                                chessBoard = chessBoard.concat("r|");
+                                line = line.concat("r|");
                                 break;
                             case KNIGHT:
-                                chessBoard = chessBoard.concat("n|");
+                                line = line.concat("n|");
                                 break;
                             case PAWN:
-                                chessBoard = chessBoard.concat("p|");
+                                line = line.concat("p|");
                                 break;
                         }
                     }
                 }
             }
-            chessBoard = chessBoard.concat("\n");
+            chessBoard = line + "\n" + chessBoard;
+            line = "";
         }
 
         return chessBoard;

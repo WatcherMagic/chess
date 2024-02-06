@@ -43,14 +43,35 @@ public class ChessGame {
         BLACK
     }
 
-    public void undoMove(ChessMove move) {
+    public void undoMove(ChessMove move, ChessPiece capturedPiece) {
         mainBoard.addPiece(move.getStartPosition(), mainBoard.getPiece(move.getEndPosition()));
         mainBoard.removePiece(move.getEndPosition());
+
+        if (capturedPiece != null) {
+            mainBoard.addPiece(move.getEndPosition(), capturedPiece);
+        }
     }
 
-    public void doMove(ChessMove move) {
-        mainBoard.addPiece(move.getEndPosition(), mainBoard.getPiece(move.getStartPosition()));
-        mainBoard.removePiece(move.getStartPosition());
+    public ChessPiece doMove(ChessMove move) {
+
+        ChessPiece capturedPiece = null;
+
+        if (mainBoard.getPiece(move.getEndPosition()) != null) {
+            capturedPiece = mainBoard.getPiece(move.getEndPosition());
+        }
+
+        if (move.getPromotionPiece() != null) {
+            mainBoard.addPiece(move.getEndPosition(),
+                    new ChessPiece(mainBoard.getPiece(move.getStartPosition()).getTeamColor(), move.getPromotionPiece()));
+            mainBoard.removePiece(move.getStartPosition());
+        }
+        else {
+            mainBoard.addPiece(move.getEndPosition(), mainBoard.getPiece(move.getStartPosition()));
+            mainBoard.removePiece(move.getStartPosition());
+        }
+
+        return capturedPiece;
+
     }
 
     /**
@@ -69,14 +90,15 @@ public class ChessGame {
 
         Collection<ChessMove> finalValid = new HashSet<>();
         TeamColor color = mainBoard.getPiece(startPosition).getTeamColor();
+        ChessPiece capturedPiece = null;
 
         //here run the valid moves through for check
         for (ChessMove move : valid) {
-            doMove(move);
+            capturedPiece = doMove(move);
             if (!isInCheck(color)) {
                 finalValid.add(move);
             }
-            undoMove(move);
+            undoMove(move, capturedPiece);
         }
 
         return finalValid;
@@ -437,7 +459,8 @@ public class ChessGame {
             for (int x = 0; x < mainBoard.getBoardLength(); x++) {
                 for (int y = 0; y < mainBoard.getBoardLength(); y++) {
                     //get valid moves for each piece
-                    if (mainBoard.getPiece(new ChessPosition(x+1, y+1)).getTeamColor() == teamColor) {
+                    if (mainBoard.getPiece(new ChessPosition(x+1,y+1)) != null
+                            && mainBoard.getPiece(new ChessPosition(x+1, y+1)).getTeamColor() == teamColor) {
                         Collection<ChessMove> valid = validMoves(new ChessPosition(x+1, y+1));
 
                         //if a piece has at least 1 valid move

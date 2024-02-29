@@ -1,7 +1,6 @@
 package server;
 
-import dataAccess.MemAuthDAO;
-import dataAccess.MemUserDAO;
+import dataAccess.*;
 import spark.*;
 
 import static spark.Spark.post;
@@ -11,8 +10,9 @@ import static spark.Spark.put;
 
 public class Server {
 
-    MemUserDAO userDAO;
-    MemAuthDAO authDAO;
+    UserDAO userDAO;
+    AuthDAO authDAO;
+    GameDAO gameDAO;
 
     public int run(int desiredPort) {
         Spark.port(desiredPort);
@@ -37,26 +37,32 @@ public class Server {
     private void initializeDAOs() {
         userDAO = new MemUserDAO();
         authDAO = new MemAuthDAO();
+        gameDAO = new MemGameDAO();
     }
 
     private void createRoutes() {
 
-        //        post("/session", (req, res) -> { //LOGIN
-//
-//        });
-//        delete("/session", (req, res) -> { //LOGOUT
-//
-//        });
+        UserService userService = new UserService(userDAO, authDAO);
 
         post("/user", (req, res) -> { //REGISTER
-            RegistrationService register = new RegistrationService(userDAO, authDAO);
-            //res = register(where do I get request/userdata?)
+            //res = userService.register(where do I get request/userdata?)
+            return res;
+        });
+        post("/session", (req, res) -> { //LOGIN
+            //userService.login(username, password);
+            return res;
+        });
+        delete("/session", (req, res) -> { //LOGOUT
+            //userService.logout(authToken)
             return res;
         });
 
-//        get("/game", (req, res) -> { //LIST GAMES
-//
-//        });
+        GameService gameService = new GameService(authDAO, gameDAO);
+
+        get("/game", (req, res) -> { //LIST GAMES
+            //gameService.listGames(authToken)
+            return res;
+        });
 //        post("/game", (req, res) -> { //CREATE GAME
 //
 //        });

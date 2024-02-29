@@ -8,17 +8,19 @@ import java.util.UUID;
 
 public class MemAuthDAO implements AuthDAO {
 
-    //list of auths
     List<AuthToken> tokens;
 
-    //make sure you don't create a new instance of this class every time it's called!
-    //otherwise user data will go poof
     public MemAuthDAO() {
         tokens = new ArrayList<>();
     }
 
     @Override
     public AuthToken getAuth(String username) {
+        for (AuthToken token : tokens) {
+            if (token.username() == username) {
+                return token;
+            }
+        }
         return null;
     }
 
@@ -35,7 +37,14 @@ public class MemAuthDAO implements AuthDAO {
 
     @Override
     public void replaceAuth(String username) {
+        AuthToken update = getAuth(username);
+        int index = tokens.indexOf(update);
+        tokens.set(index, new AuthToken(username, generateAuth()));
+    }
 
+    @Override
+    public void removeAuth(AuthToken auth) {
+        tokens.remove(tokens.indexOf(auth));
     }
 
     @Override

@@ -5,10 +5,9 @@ import java.util.List;
 
 public interface UserDAO {
 
-    //get: pulls requested user from list of users in DAO
-    User getUser(String username);
+    void addUser(User user);
 
-    //add: inserts new user to list
+    User getUser(String username);
 
 
     //update: changes user data

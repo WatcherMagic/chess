@@ -1,6 +1,4 @@
-package server.resreq;
-
-import dataAccess.objects.GameData;
+package model;
 
 import java.util.List;
 

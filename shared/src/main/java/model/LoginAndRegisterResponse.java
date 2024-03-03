@@ -1,6 +1,4 @@
-package server.resreq;
-
-import dataAccess.objects.AuthToken;
+package model;
 
 public class LoginAndRegisterResponse extends Response {
     String authToken;

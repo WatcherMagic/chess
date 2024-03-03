@@ -1,16 +1,12 @@
-package server;
+package service;
 
 import dataAccess.AuthDAO;
 import dataAccess.MemAuthDAO;
 import dataAccess.MemUserDAO;
 import dataAccess.UserDAO;
-import dataAccess.objects.AuthToken;
-import dataAccess.objects.User;
-import org.eclipse.jetty.util.log.Log;
-import server.resreq.LoginAndRegisterResponse;
-import server.resreq.Response;
-
-import java.util.Objects;
+import model.AuthToken;
+import model.LoginAndRegisterResponse;
+import model.User;
 
 public class UserService {
 

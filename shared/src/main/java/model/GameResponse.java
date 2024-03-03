@@ -1,4 +1,4 @@
-package server.resreq;
+package model;
 
 public class GameResponse extends Response {
 

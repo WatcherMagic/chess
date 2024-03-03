@@ -1,5 +1,3 @@
-package server.resreq;
-
-import dataAccess.objects.AuthToken;
+package model;
 
 public record GameRequest(String gameName, Integer gameID, String playerColor) {}

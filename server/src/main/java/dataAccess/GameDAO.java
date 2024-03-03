@@ -1,7 +1,7 @@
 package dataAccess;
 
-import dataAccess.objects.GameData;
 import chess.ChessGame.TeamColor;
+import model.GameData;
 
 import java.util.List;
 

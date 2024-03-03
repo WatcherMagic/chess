@@ -1,5 +1,6 @@
 package dataAccess;
-import dataAccess.objects.AuthToken;
+
+import model.AuthToken;
 
 public interface AuthDAO {
 

@@ -1,12 +1,8 @@
-package server;
+package service;
 
 import dataAccess.*;
-import dataAccess.objects.AuthToken;
-import dataAccess.objects.GameData;
+import model.*;
 import chess.ChessGame.TeamColor;
-import server.resreq.GameListResponse;
-import server.resreq.GameRequest;
-import server.resreq.GameResponse;
 
 import java.util.List;
 

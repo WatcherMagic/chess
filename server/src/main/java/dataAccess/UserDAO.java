@@ -1,7 +1,6 @@
 package dataAccess;
-import dataAccess.objects.User;
 
-import java.util.List;
+import model.User;
 
 public interface UserDAO {
 

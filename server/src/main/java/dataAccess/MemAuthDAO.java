@@ -1,6 +1,6 @@
 package dataAccess;
 
-import dataAccess.objects.AuthToken;
+import model.AuthToken;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,15 +1,14 @@
 package passoffTests.serverTests;
 
-import chess.ChessGame;
 import dataAccess.*;
-import dataAccess.objects.AuthToken;
-import dataAccess.objects.User;
+import model.AuthToken;
+import model.User;
 import org.junit.jupiter.api.Test;
-import server.GameService;
-import server.UserService;
-import server.resreq.GameListResponse;
-import server.resreq.GameRequest;
-import server.resreq.GameResponse;
+import service.GameService;
+import service.UserService;
+import model.GameListResponse;
+import model.GameRequest;
+import model.GameResponse;
 
 import static org.junit.jupiter.api.Assertions.*;
 

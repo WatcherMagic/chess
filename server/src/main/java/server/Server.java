@@ -2,12 +2,9 @@ package server;
 
 import com.google.gson.Gson;
 import dataAccess.*;
-import dataAccess.objects.AuthToken;
-import dataAccess.objects.User;
-import server.resreq.GameListResponse;
-import server.resreq.GameRequest;
-import server.resreq.GameResponse;
-import server.resreq.LoginAndRegisterResponse;
+import model.*;
+import model.Response;
+import service.*;
 import spark.*;
 
 import static spark.Spark.post;

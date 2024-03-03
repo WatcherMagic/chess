@@ -4,11 +4,11 @@ import dataAccess.AuthDAO;
 import dataAccess.MemAuthDAO;
 import dataAccess.MemUserDAO;
 import dataAccess.UserDAO;
-import dataAccess.objects.AuthToken;
-import dataAccess.objects.User;
+import model.AuthToken;
+import model.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import server.UserService;
+import service.UserService;
 
 import static org.junit.jupiter.api.Assertions.*;
 

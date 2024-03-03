@@ -1,12 +1,12 @@
 package dataAccess;
 
-import model.User;
+import model.UserData;
 
 public interface UserDAO {
 
-    void addUser(User user);
+    void addUser(UserData user);
 
-    User getUser(String username);
+    UserData getUser(String username);
 
     int containsUser(String username);
 

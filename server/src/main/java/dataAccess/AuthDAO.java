@@ -1,20 +1,20 @@
 package dataAccess;
 
-import model.AuthToken;
+import model.AuthData;
 
 public interface AuthDAO {
 
-    public AuthToken getAuth(String username);
+    public AuthData getAuth(String username);
 
-    public AuthToken getAuthFromToken(String authString);
+    public AuthData getAuthFromToken(String authString);
 
-    public boolean validateAuth(AuthToken auth);
+    public boolean validateAuth(AuthData auth);
 
-    public AuthToken createAuth(String username);
+    public AuthData createAuth(String username);
 
-    public AuthToken addAuth(AuthToken auth);
+    public AuthData addAuth(AuthData auth);
 
-    public void removeAuth(AuthToken auth);
+    public void removeAuth(AuthData auth);
 
     public String generateAuth();
 

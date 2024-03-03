@@ -1,13 +1,13 @@
 package dataAccess;
 
-import model.User;
+import model.UserData;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class MemUserDAO implements UserDAO {
 
-    List<User> users;
+    List<UserData> users;
 
     //make sure you don't create a new instance of this class every time it's called!
     //otherwise user data will go poof
@@ -17,7 +17,7 @@ public class MemUserDAO implements UserDAO {
     }
 
     @Override
-    public User getUser(String username) {
+    public UserData getUser(String username) {
         int i = containsUser(username);
         if (i != -1) {
             return users.get(i);
@@ -29,7 +29,7 @@ public class MemUserDAO implements UserDAO {
 
     @Override
     public int containsUser(String username) {
-        for (User user : users) {
+        for (UserData user : users) {
             if (user.username().equals(username)) {
                 return users.indexOf(user);
             }
@@ -38,7 +38,7 @@ public class MemUserDAO implements UserDAO {
     }
 
     @Override
-    public void addUser(User user) {
+    public void addUser(UserData user) {
         users.add(user);
     }
 

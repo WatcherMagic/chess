@@ -1,6 +1,6 @@
 package dataAccess;
 
-import model.AuthToken;
+import model.AuthData;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,15 +9,15 @@ import java.util.UUID;
 
 public class MemAuthDAO implements AuthDAO {
 
-    List<AuthToken> tokens;
+    List<AuthData> tokens;
 
     public MemAuthDAO() {
         tokens = new ArrayList<>();
     }
 
     @Override
-    public AuthToken getAuth(String username) {
-        for (AuthToken token : tokens) {
+    public AuthData getAuth(String username) {
+        for (AuthData token : tokens) {
             if (token.username().equals(username)) {
                 return token;
             }
@@ -26,8 +26,8 @@ public class MemAuthDAO implements AuthDAO {
     }
 
     @Override
-    public AuthToken getAuthFromToken(String authString) {
-        for (AuthToken token : tokens) {
+    public AuthData getAuthFromToken(String authString) {
+        for (AuthData token : tokens) {
             if (Objects.equals(token.token(), authString)) {
                 return token;
             }
@@ -36,7 +36,7 @@ public class MemAuthDAO implements AuthDAO {
     }
 
     @Override
-    public boolean validateAuth(AuthToken auth) {
+    public boolean validateAuth(AuthData auth) {
         if (auth != null && getAuthFromToken(auth.token()) == auth) {
             return true;
         }
@@ -46,18 +46,18 @@ public class MemAuthDAO implements AuthDAO {
     }
 
     @Override
-    public AuthToken createAuth(String username) {
-        return new AuthToken(username, generateAuth());
+    public AuthData createAuth(String username) {
+        return new AuthData(username, generateAuth());
     }
 
     @Override
-    public AuthToken addAuth(AuthToken auth) {
+    public AuthData addAuth(AuthData auth) {
         tokens.add(auth);
         return auth;
     }
 
     @Override
-    public void removeAuth(AuthToken auth) {
+    public void removeAuth(AuthData auth) {
         tokens.remove(tokens.indexOf(auth));
     }
 

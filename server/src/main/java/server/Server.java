@@ -2,8 +2,8 @@ package server;
 
 import com.google.gson.Gson;
 import dataAccess.*;
-import model.AuthToken;
-import model.User;
+import model.AuthData;
+import model.UserData;
 import service.*;
 import spark.*;
 import spark.Response;
@@ -56,7 +56,7 @@ public class Server {
         UserService userService = new UserService(userDAO, authDAO);
 
         post("/user", (req, res) -> { //REGISTER
-            User newUser = serializer.fromJson(req.body(), User.class);
+            UserData newUser = serializer.fromJson(req.body(), UserData.class);
             LoginAndRegisterResponse r = userService.register(newUser);
             String s = serializer.toJson(r);
             res.body(s);
@@ -79,7 +79,7 @@ public class Server {
             //check to make sure status code is correct
         });
         post("/session", (req, res) -> { //LOGIN
-            User in = serializer.fromJson(req.body(), User.class);
+            UserData in = serializer.fromJson(req.body(), UserData.class);
             LoginAndRegisterResponse r = userService.login(in);
             res.body(serializer.toJson(r));
             if (!r.userInfoNull()) { //username already taken
@@ -99,7 +99,7 @@ public class Server {
         });
         delete("/session", (req, res) -> { //LOGOUT
             String authStr = req.headers("authorization");
-            AuthToken auth = authDAO.getAuthFromToken(authStr);
+            AuthData auth = authDAO.getAuthFromToken(authStr);
             LoginAndRegisterResponse out = userService.logout(auth);
             String json = serializer.toJson(out);
             res.body(json);
@@ -124,7 +124,7 @@ public class Server {
         post("/game", (req, res) -> { //CREATE GAME
             GameRequest newGame = serializer.fromJson(req.body(), GameRequest.class);
             String authStr = req.headers("authorization");
-            AuthToken auth = authDAO.getAuthFromToken(authStr);
+            AuthData auth = authDAO.getAuthFromToken(authStr);
             GameResponse r = gameService.newGame(newGame, auth);
             res.body(serializer.toJson(r));
 
@@ -149,7 +149,7 @@ public class Server {
         });
         get("/game", (req, res) -> { //LIST GAMES
             String authStr = req.headers("authorization");
-            AuthToken auth = authDAO.getAuthFromToken(authStr);
+            AuthData auth = authDAO.getAuthFromToken(authStr);
             GameListResponse r = gameService.listGames(auth);
             String s = serializer.toJson(r);
             res.body(s);
@@ -170,7 +170,7 @@ public class Server {
         put("/game",(req, res) -> { //JOIN GAME
             GameRequest joinGame = serializer.fromJson(req.body(), GameRequest.class);
             String authStr = req.headers("authorization");
-            AuthToken auth = authDAO.getAuthFromToken(authStr);
+            AuthData auth = authDAO.getAuthFromToken(authStr);
             GameResponse r = gameService.joinGame(auth, joinGame.gameID(), joinGame.playerColor());
             res.body(serializer.toJson(r));
 

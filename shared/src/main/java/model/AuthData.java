@@ -2,12 +2,12 @@ package model;
 
 import java.util.Objects;
 
-public record AuthToken (String username, String token) {
+public record AuthData(String username, String token) {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        AuthToken authToken = (AuthToken) o;
+        AuthData authToken = (AuthData) o;
         return Objects.equals(username, authToken.username) && Objects.equals(token, authToken.token);
     }
 

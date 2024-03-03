@@ -1,8 +1,8 @@
 package passoffTests.serverTests;
 
 import dataAccess.*;
-import model.AuthToken;
-import model.User;
+import model.AuthData;
+import model.UserData;
 import org.junit.jupiter.api.Test;
 import service.GameService;
 import service.UserService;
@@ -22,8 +22,8 @@ class GameTests {
         GameService service = new GameService(authDAO, gameDAO);
         UserService user = new UserService(userDAO, authDAO);
 
-        user.register(new User("WatcherMagic", "password", "email"));
-        AuthToken userAuth = authDAO.getAuth("WatcherMagic");
+        user.register(new UserData("WatcherMagic", "password", "email"));
+        AuthData userAuth = authDAO.getAuth("WatcherMagic");
         //service.newGame(userAuth, "Game1");
 
         assertEquals(1, gameDAO.getGameList().size());
@@ -37,8 +37,8 @@ class GameTests {
         GameService service = new GameService(authDAO, gameDAO);
         UserService user = new UserService(userDAO, authDAO);
 
-        user.register(new User("WatcherMagic", "password", "email"));
-        AuthToken userAuth = authDAO.getAuth("WatcherMagic");
+        user.register(new UserData("WatcherMagic", "password", "email"));
+        AuthData userAuth = authDAO.getAuth("WatcherMagic");
 //        int gameID = service.newGame(userAuth, "Game1");
 //        service.joinGame(userAuth, gameID, ChessGame.TeamColor.WHITE);
 //        assertEquals(gameDAO.getGameData(gameID).whiteUsername(), userAuth.username());
@@ -57,12 +57,12 @@ class GameTests {
         GameService gameService = new GameService(authDAO, gameDAO);
         UserService userService = new UserService(userDAO, authDAO);
 
-        User user = new User("CoolName", "1234", "mail");
+        UserData user = new UserData("CoolName", "1234", "mail");
         userService.register(user);
         userService.logout(authDAO.getAuth(user.username()));
         assertEquals(authDAO.getAuth(user.username()), null, "There is an auth token for a user when there shouldn't be");
         userService.login(user);
-        AuthToken userAuth = authDAO.getAuth(user.username());
+        AuthData userAuth = authDAO.getAuth(user.username());
         assertNotEquals(userAuth, null, "The user is missing an auth token when they should have one");
 
         GameResponse game1 = gameService.newGame(new GameRequest("Game1", null, null), userAuth);

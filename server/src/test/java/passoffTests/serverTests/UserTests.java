@@ -4,8 +4,8 @@ import dataAccess.AuthDAO;
 import dataAccess.MemAuthDAO;
 import dataAccess.MemUserDAO;
 import dataAccess.UserDAO;
-import model.AuthToken;
-import model.User;
+import model.AuthData;
+import model.UserData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import service.UserService;
@@ -20,12 +20,12 @@ class UserTests {
     @BeforeEach
     void setUp() {
         memDAO = new MemUserDAO();
-        memDAO.addUser(new User("WatcherMagic", "password", "watcher@email.com"));
+        memDAO.addUser(new UserData("WatcherMagic", "password", "watcher@email.com"));
     }
 
     @Test
     void getUser() {
-        User u = new User("WatcherMagic", "password", "watcher@email.com");
+        UserData u = new UserData("WatcherMagic", "password", "watcher@email.com");
 
         assertEquals(memDAO.getUser("WatcherMagic"), u);
         assertEquals(memDAO.getUser("Bob"), null);
@@ -33,7 +33,7 @@ class UserTests {
 
     @Test
     void containsUser() {
-        User u = new User("WatcherMagic", "password", "watcher@gmail.com");
+        UserData u = new UserData("WatcherMagic", "password", "watcher@gmail.com");
 
         assertNotEquals(memDAO.containsUser("WatcherMagic"), -1);
         assertEquals(memDAO.containsUser("Joe"), -1);
@@ -41,7 +41,7 @@ class UserTests {
 
     @Test
     void getAuth() {
-        AuthToken auth = new AuthToken("WatcherMagic", "123");
+        AuthData auth = new AuthData("WatcherMagic", "123");
         AuthDAO autHDAO = new MemAuthDAO();
         autHDAO.addAuth(auth);
 
@@ -53,7 +53,7 @@ class UserTests {
         UserDAO user = new MemUserDAO();
         AuthDAO auth = new MemAuthDAO();
         UserService register = new UserService(user, auth);
-        register.register(new User("WatcherMagic", "superawesomepassword", "spam"));
+        register.register(new UserData("WatcherMagic", "superawesomepassword", "spam"));
 
         assertNotEquals(user.containsUser("WatcherMagic"), -1);
         assertNotEquals(auth.getAuth("WatcherMagic"), null);
@@ -65,11 +65,11 @@ class UserTests {
         AuthDAO authDAO = new MemAuthDAO();
         UserService userService = new UserService(userDAO, authDAO);
 
-        userService.register(new User("WatcherMagic", "imafortress", "spam"));
-        AuthToken oldToken = authDAO.getAuth("WatcherMagic");
+        userService.register(new UserData("WatcherMagic", "imafortress", "spam"));
+        AuthData oldToken = authDAO.getAuth("WatcherMagic");
 
         //userService.login("WatcherMagic", "imafortress");
-        AuthToken newToken = authDAO.getAuth("WatcherMagic");
+        AuthData newToken = authDAO.getAuth("WatcherMagic");
 
         assertNotEquals(oldToken, newToken);
     }
@@ -80,11 +80,11 @@ class UserTests {
         AuthDAO authDAO = new MemAuthDAO();
         UserService userService = new UserService(userDAO, authDAO);
 
-        userService.register(new User("WatcherMagic", "imafortress", "spam"));
-        AuthToken oldToken = authDAO.getAuth("WatcherMagic");
+        userService.register(new UserData("WatcherMagic", "imafortress", "spam"));
+        AuthData oldToken = authDAO.getAuth("WatcherMagic");
 
         //userService.login("WatcherMagic", "wrongpassword");
-        AuthToken newToken = authDAO.getAuth("WatcherMagic");
+        AuthData newToken = authDAO.getAuth("WatcherMagic");
 
         assertEquals(oldToken, newToken);
     }
@@ -95,8 +95,8 @@ class UserTests {
         AuthDAO authDAO = new MemAuthDAO();
         UserService userService = new UserService(userDAO, authDAO);
 
-        userService.register(new User("WatcherMagic", "imafortress", "spam"));
-        AuthToken token = authDAO.getAuth("WatcherMagic");
+        userService.register(new UserData("WatcherMagic", "imafortress", "spam"));
+        AuthData token = authDAO.getAuth("WatcherMagic");
 
         userService.logout(token);
         assertEquals(authDAO.getAuth(token.username()), null);

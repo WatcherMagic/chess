@@ -4,8 +4,8 @@ import dataAccess.AuthDAO;
 import dataAccess.MemAuthDAO;
 import dataAccess.MemUserDAO;
 import dataAccess.UserDAO;
-import model.AuthToken;
-import model.User;
+import model.AuthData;
+import model.UserData;
 
 public class UserService {
 
@@ -28,7 +28,7 @@ public class UserService {
             return errorCode;
         }
 
-        public LoginAndRegisterResponse register(User newUser) {
+        public LoginAndRegisterResponse register(UserData newUser) {
             errorCode = 0;
             if (newUser != null) {
                 if (newUser.username() == null || newUser.password() == null || newUser.email() == null) {
@@ -40,7 +40,7 @@ public class UserService {
                     if (userDAO.getUser(newUser.username()) == null) {
                         userDAO.addUser(newUser);
 
-                        AuthToken auth = authDAO.createAuth(newUser.username());
+                        AuthData auth = authDAO.createAuth(newUser.username());
                         authDAO.addAuth(auth);
                         return new LoginAndRegisterResponse(null, newUser.username(), auth.token());
                     }
@@ -62,15 +62,15 @@ public class UserService {
 
         }
 
-        private User createUser(String username, String password, String email) {
-            return new User(username, password, email);
+        private UserData createUser(String username, String password, String email) {
+            return new UserData(username, password, email);
         }
 
-        public LoginAndRegisterResponse login(User user) {
+        public LoginAndRegisterResponse login(UserData user) {
             errorCode = 0;
             if (userDAO.containsUser(user.username()) != -1) {
                 if (userDAO.getUser(user.username()).password().equals(user.password())) {
-                    AuthToken newAuth = authDAO.createAuth(user.username());
+                    AuthData newAuth = authDAO.createAuth(user.username());
                     authDAO.addAuth(newAuth);
                     return new LoginAndRegisterResponse(null, user.username(), newAuth.token()); //*****
                 }
@@ -85,7 +85,7 @@ public class UserService {
             }
         }
 
-        public LoginAndRegisterResponse logout(AuthToken auth) {
+        public LoginAndRegisterResponse logout(AuthData auth) {
             errorCode = 0;
             if (auth == null) {
                 //unauthorized

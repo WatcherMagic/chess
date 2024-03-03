@@ -1,7 +1,7 @@
 package service;
 
 import dataAccess.*;
-import model.AuthToken;
+import model.AuthData;
 import model.GameData;
 import chess.ChessGame.TeamColor;
 
@@ -22,7 +22,7 @@ public class GameService {
         return errorCode;
     }
 
-    public GameResponse newGame(GameRequest request, AuthToken auth) {
+    public GameResponse newGame(GameRequest request, AuthData auth) {
         errorCode = 0;
         if (auth == null || !authDAO.validateAuth(auth)) {
             errorCode = 401;
@@ -43,7 +43,7 @@ public class GameService {
         return new GameResponse("Error: description", null, null);
     }
 
-    public GameListResponse listGames(AuthToken auth) {
+    public GameListResponse listGames(AuthData auth) {
         errorCode = 0;
         if (auth == null || !authDAO.validateAuth(auth)) {
             errorCode = 401;
@@ -57,7 +57,7 @@ public class GameService {
         return new GameListResponse("Error: description", null);
     }
 
-    public GameResponse joinGame(AuthToken auth, Integer gameID, String color) {
+    public GameResponse joinGame(AuthData auth, Integer gameID, String color) {
         errorCode = 0;
         GameData g = gameDAO.getGameData(gameID);
         if (g == null) {

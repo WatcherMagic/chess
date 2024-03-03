@@ -5,7 +5,6 @@ import dataAccess.MemAuthDAO;
 import dataAccess.MemUserDAO;
 import dataAccess.UserDAO;
 import model.AuthToken;
-import model.LoginAndRegisterResponse;
 import model.User;
 
 public class UserService {

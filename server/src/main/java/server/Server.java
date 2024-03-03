@@ -2,10 +2,11 @@ package server;
 
 import com.google.gson.Gson;
 import dataAccess.*;
-import model.*;
-import model.Response;
+import model.AuthToken;
+import model.User;
 import service.*;
 import spark.*;
+import spark.Response;
 
 import static spark.Spark.post;
 import static spark.Spark.delete;

@@ -1,7 +1,8 @@
 package service;
 
 import dataAccess.*;
-import model.*;
+import model.AuthToken;
+import model.GameData;
 import chess.ChessGame.TeamColor;
 
 import java.util.List;

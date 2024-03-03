@@ -6,9 +6,9 @@ import model.User;
 import org.junit.jupiter.api.Test;
 import service.GameService;
 import service.UserService;
-import model.GameListResponse;
-import model.GameRequest;
-import model.GameResponse;
+import service.GameListResponse;
+import service.GameRequest;
+import service.GameResponse;
 
 import static org.junit.jupiter.api.Assertions.*;
 

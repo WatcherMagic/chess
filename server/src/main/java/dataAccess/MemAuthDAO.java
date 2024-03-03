@@ -4,6 +4,7 @@ import dataAccess.objects.AuthToken;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 public class MemAuthDAO implements AuthDAO {
@@ -17,11 +18,31 @@ public class MemAuthDAO implements AuthDAO {
     @Override
     public AuthToken getAuth(String username) {
         for (AuthToken token : tokens) {
-            if (token.username() == username) {
+            if (token.username().equals(username)) {
                 return token;
             }
         }
         return null;
+    }
+
+    @Override
+    public AuthToken getAuthFromToken(String authString) {
+        for (AuthToken token : tokens) {
+            if (Objects.equals(token.token(), authString)) {
+                return token;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public boolean validateAuth(AuthToken auth) {
+        if (auth != null && getAuthFromToken(auth.token()) == auth) {
+            return true;
+        }
+        else {
+            return false;
+        }
     }
 
     @Override
@@ -36,13 +57,6 @@ public class MemAuthDAO implements AuthDAO {
     }
 
     @Override
-    public void replaceAuth(String username) {
-        AuthToken update = getAuth(username);
-        int index = tokens.indexOf(update);
-        tokens.set(index, new AuthToken(username, generateAuth()));
-    }
-
-    @Override
     public void removeAuth(AuthToken auth) {
         tokens.remove(tokens.indexOf(auth));
     }
@@ -50,5 +64,10 @@ public class MemAuthDAO implements AuthDAO {
     @Override
     public String generateAuth() {
         return UUID.randomUUID().toString();
+    }
+
+    @Override
+    public void clearData() {
+        tokens.clear();
     }
 }

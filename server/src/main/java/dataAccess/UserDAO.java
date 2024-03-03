@@ -9,9 +9,7 @@ public interface UserDAO {
 
     User getUser(String username);
 
-
-    //update: changes user data
-
-
     int containsUser(String username);
+
+    void clearData();
 }

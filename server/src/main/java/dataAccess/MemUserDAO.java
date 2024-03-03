@@ -30,15 +30,20 @@ public class MemUserDAO implements UserDAO {
     @Override
     public int containsUser(String username) {
         for (User user : users) {
-            if (user.username() == username) {
+            if (user.username().equals(username)) {
                 return users.indexOf(user);
             }
         }
         return -1;
     }
 
+    @Override
     public void addUser(User user) {
         users.add(user);
     }
 
+    @Override
+    public void clearData() {
+        users.clear();
+    }
 }

@@ -42,9 +42,9 @@ public class Server {
     }
 
     private void initializeDAOs() {
-        userDAO = new MemUserDAO();
-        authDAO = new MemAuthDAO();
-        gameDAO = new MemGameDAO();
+        userDAO = new MemoryUserDAO();
+        authDAO = new MemoryAuthDAO();
+        gameDAO = new MemoryGameDAO();
     }
 
     //no gameName: bad request

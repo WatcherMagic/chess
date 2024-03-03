@@ -1,8 +1,8 @@
 package passoffTests.serverTests;
 
 import dataAccess.AuthDAO;
-import dataAccess.MemAuthDAO;
-import dataAccess.MemUserDAO;
+import dataAccess.MemoryAuthDAO;
+import dataAccess.MemoryUserDAO;
 import dataAccess.UserDAO;
 import model.AuthData;
 import model.UserData;
@@ -19,7 +19,7 @@ class UserTests {
 
     @BeforeEach
     void setUp() {
-        memDAO = new MemUserDAO();
+        memDAO = new MemoryUserDAO();
         memDAO.addUser(new UserData("WatcherMagic", "password", "watcher@email.com"));
     }
 
@@ -42,7 +42,7 @@ class UserTests {
     @Test
     void getAuth() {
         AuthData auth = new AuthData("WatcherMagic", "123");
-        AuthDAO autHDAO = new MemAuthDAO();
+        AuthDAO autHDAO = new MemoryAuthDAO();
         autHDAO.addAuth(auth);
 
         assertEquals(autHDAO.getAuth("WatcherMagic"), auth);
@@ -50,8 +50,8 @@ class UserTests {
 
     @Test
     void addNewUser() {
-        UserDAO user = new MemUserDAO();
-        AuthDAO auth = new MemAuthDAO();
+        UserDAO user = new MemoryUserDAO();
+        AuthDAO auth = new MemoryAuthDAO();
         UserService register = new UserService(user, auth);
         register.register(new UserData("WatcherMagic", "superawesomepassword", "spam"));
 
@@ -61,8 +61,8 @@ class UserTests {
 
     @Test
     public void authRefreshedOnSuccessfulLogin() {
-        UserDAO userDAO = new MemUserDAO();
-        AuthDAO authDAO = new MemAuthDAO();
+        UserDAO userDAO = new MemoryUserDAO();
+        AuthDAO authDAO = new MemoryAuthDAO();
         UserService userService = new UserService(userDAO, authDAO);
 
         userService.register(new UserData("WatcherMagic", "imafortress", "spam"));
@@ -76,8 +76,8 @@ class UserTests {
 
     @Test
     public void authRefreshFailOnUnsuccessfulLogin() {
-        UserDAO userDAO = new MemUserDAO();
-        AuthDAO authDAO = new MemAuthDAO();
+        UserDAO userDAO = new MemoryUserDAO();
+        AuthDAO authDAO = new MemoryAuthDAO();
         UserService userService = new UserService(userDAO, authDAO);
 
         userService.register(new UserData("WatcherMagic", "imafortress", "spam"));
@@ -91,8 +91,8 @@ class UserTests {
 
     @Test
     public void logout() {
-        UserDAO userDAO = new MemUserDAO();
-        AuthDAO authDAO = new MemAuthDAO();
+        UserDAO userDAO = new MemoryUserDAO();
+        AuthDAO authDAO = new MemoryAuthDAO();
         UserService userService = new UserService(userDAO, authDAO);
 
         userService.register(new UserData("WatcherMagic", "imafortress", "spam"));

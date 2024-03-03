@@ -16,9 +16,9 @@ class GameTests {
 
     @Test
     public void createGame() {
-        UserDAO userDAO = new MemUserDAO();
-        AuthDAO authDAO = new MemAuthDAO();
-        GameDAO gameDAO = new MemGameDAO();
+        UserDAO userDAO = new MemoryUserDAO();
+        AuthDAO authDAO = new MemoryAuthDAO();
+        GameDAO gameDAO = new MemoryGameDAO();
         GameService service = new GameService(authDAO, gameDAO);
         UserService user = new UserService(userDAO, authDAO);
 
@@ -31,9 +31,9 @@ class GameTests {
 
     @Test
     public void joinGame() {
-        UserDAO userDAO = new MemUserDAO();
-        AuthDAO authDAO = new MemAuthDAO();
-        GameDAO gameDAO = new MemGameDAO();
+        UserDAO userDAO = new MemoryUserDAO();
+        AuthDAO authDAO = new MemoryAuthDAO();
+        GameDAO gameDAO = new MemoryGameDAO();
         GameService service = new GameService(authDAO, gameDAO);
         UserService user = new UserService(userDAO, authDAO);
 
@@ -51,9 +51,9 @@ class GameTests {
 
     @Test
     public void oneAuthPerUser() {
-        UserDAO userDAO = new MemUserDAO();
-        AuthDAO authDAO = new MemAuthDAO();
-        GameDAO gameDAO = new MemGameDAO();
+        UserDAO userDAO = new MemoryUserDAO();
+        AuthDAO authDAO = new MemoryAuthDAO();
+        GameDAO gameDAO = new MemoryGameDAO();
         GameService gameService = new GameService(authDAO, gameDAO);
         UserService userService = new UserService(userDAO, authDAO);
 

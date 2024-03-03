@@ -5,14 +5,14 @@ import model.UserData;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MemUserDAO implements UserDAO {
+public class MemoryUserDAO implements UserDAO {
 
     List<UserData> users;
 
     //make sure you don't create a new instance of this class every time it's called!
     //otherwise user data will go poof
 
-    public MemUserDAO() {
+    public MemoryUserDAO() {
         this.users = new ArrayList<>();
     }
 

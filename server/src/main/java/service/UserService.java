@@ -1,8 +1,8 @@
 package service;
 
 import dataAccess.AuthDAO;
-import dataAccess.MemAuthDAO;
-import dataAccess.MemUserDAO;
+import dataAccess.MemoryAuthDAO;
+import dataAccess.MemoryUserDAO;
 import dataAccess.UserDAO;
 import model.AuthData;
 import model.UserData;
@@ -15,8 +15,8 @@ public class UserService {
         int errorCode = 0;
 
         public UserService() {
-                userDAO = new MemUserDAO();
-                authDAO = new MemAuthDAO();
+                userDAO = new MemoryUserDAO();
+                authDAO = new MemoryAuthDAO();
             }
 
         public UserService(UserDAO user, AuthDAO auth) {

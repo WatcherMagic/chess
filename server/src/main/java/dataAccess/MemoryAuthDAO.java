@@ -7,11 +7,11 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
-public class MemAuthDAO implements AuthDAO {
+public class MemoryAuthDAO implements AuthDAO {
 
     List<AuthData> tokens;
 
-    public MemAuthDAO() {
+    public MemoryAuthDAO() {
         tokens = new ArrayList<>();
     }
 

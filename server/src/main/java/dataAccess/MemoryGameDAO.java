@@ -6,12 +6,12 @@ import model.GameData;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MemGameDAO implements GameDAO {
+public class MemoryGameDAO implements GameDAO {
 
     List<GameData> games;
     int gameIDIncrement;
 
-    public MemGameDAO() {
+    public MemoryGameDAO() {
         this.games = new ArrayList<>();
         this.gameIDIncrement = 0;
     }

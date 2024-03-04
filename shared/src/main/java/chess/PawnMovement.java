@@ -68,20 +68,22 @@ public class PawnMovement extends PieceMovement {
         if (board.getPiece(curPos) != null) {
             if (curPos.getRow() > startPos.getRow() && color == WHITE
                     && board.getPiece(curPos).getTeamColor() != WHITE) {
-                if (!checkPromotion(moves, new ChessPosition(curPos.getRow(), curPos.getColumn()), startPos, color)) {
-                    moves.add(new ChessMove(startPos, new ChessPosition(curPos.getRow(), curPos.getColumn())));
-                }
+                checkForPromotionThenAdd(moves, startPos, color);
             }
             else if (curPos.getRow() < startPos.getRow() && color == BLACK
                     && board.getPiece(curPos).getTeamColor() != BLACK) {
-                if (!checkPromotion(moves, new ChessPosition(curPos.getRow(), curPos.getColumn()), startPos, color)) {
-                    moves.add(new ChessMove(startPos, new ChessPosition(curPos.getRow(), curPos.getColumn())));
-                }
+                checkForPromotionThenAdd(moves, startPos, color);
             }
         }
 
         i += 1;
         return i;
+    }
+
+    private void checkForPromotionThenAdd(Collection<ChessMove> moves, ChessPosition startPos, ChessGame.TeamColor color) {
+        if(!checkPromotion(moves, new ChessPosition(curPos.getRow(), curPos.getColumn()), startPos, color)) {
+            moves.add(new ChessMove(startPos, new ChessPosition(curPos.getRow(), curPos.getColumn())));
+        }
     }
 
     private int checkPosStraight(Collection<ChessMove> moves, ChessBoard board,

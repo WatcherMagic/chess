@@ -1,4 +1,4 @@
-package passoffTests.serverTests;
+package serviceTests;
 
 import dataAccess.*;
 import model.AuthData;
@@ -24,7 +24,8 @@ class GameTests {
 
         user.register(new UserData("WatcherMagic", "password", "email"));
         AuthData userAuth = authDAO.getAuth("WatcherMagic");
-        //service.newGame(userAuth, "Game1");
+        GameRequest request = new GameRequest("Game1", null, null);
+        service.newGame(request, userAuth);
 
         assertEquals(1, gameDAO.getGameList().size());
     }
@@ -39,14 +40,15 @@ class GameTests {
 
         user.register(new UserData("WatcherMagic", "password", "email"));
         AuthData userAuth = authDAO.getAuth("WatcherMagic");
-//        int gameID = service.newGame(userAuth, "Game1");
-//        service.joinGame(userAuth, gameID, ChessGame.TeamColor.WHITE);
-//        assertEquals(gameDAO.getGameData(gameID).whiteUsername(), userAuth.username());
-//
-//        user.register(new User("Weee", "password", "email"));
-//        AuthToken userAuth2 = authDAO.getAuth("Weee");
-//        service.joinGame(userAuth2, gameID, ChessGame.TeamColor.BLACK);
-//        assertEquals(gameDAO.getGameData(gameID).blackUsername(), userAuth2.username());
+        GameRequest request = new GameRequest("Game1", null, null);
+        GameResponse response = service.newGame(request, userAuth);
+        service.joinGame(userAuth, response.getGameID(), "WHITE");
+        assertEquals(gameDAO.getGameData(response.getGameID()).whiteUsername(), userAuth.username());
+
+        user.register(new UserData("Weee", "password", "email"));
+        AuthData userAuth2 = authDAO.getAuth("Weee");
+        service.joinGame(userAuth2, response.getGameID(), "BLACK");
+        assertEquals(gameDAO.getGameData(response.getGameID()).blackUsername(), userAuth2.username());
     }
 
     @Test
@@ -68,7 +70,7 @@ class GameTests {
         GameResponse game1 = gameService.newGame(new GameRequest("Game1", null, null), userAuth);
         GameResponse game2 = gameService.newGame(new GameRequest("Game2", null, null), userAuth);
         GameListResponse l = gameService.listGames(userAuth);
-//        assertNotNull(l.getGameList(), "the list of games is empty or was not returned");
+        assertNotNull(l.getGameList(), "the list of games is empty or was not returned");
 
         gameService.joinGame(userAuth, game1.getGameID(), "WHITE");
         assertEquals(gameDAO.getGameData(game1.getGameID()).whiteUsername(), user.username(), "the new player was not properly added");

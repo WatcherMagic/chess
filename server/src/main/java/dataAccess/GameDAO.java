@@ -15,5 +15,5 @@ public interface GameDAO {
 
     void addParticipant(int gameID, String username, TeamColor color);
 
-    void clearData();
+    boolean clearData();
 }

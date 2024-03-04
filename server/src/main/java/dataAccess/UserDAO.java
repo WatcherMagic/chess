@@ -2,6 +2,8 @@ package dataAccess;
 
 import model.UserData;
 
+import java.util.List;
+
 public interface UserDAO {
 
     void addUser(UserData user);
@@ -10,5 +12,5 @@ public interface UserDAO {
 
     int containsUser(String username);
 
-    void clearData();
+    boolean clearData();
 }

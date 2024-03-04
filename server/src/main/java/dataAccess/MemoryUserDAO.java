@@ -9,10 +9,8 @@ public class MemoryUserDAO implements UserDAO {
 
     List<UserData> users;
 
-    //make sure you don't create a new instance of this class every time it's called!
-    //otherwise user data will go poof
-
     public MemoryUserDAO() {
+        super();
         this.users = new ArrayList<>();
     }
 
@@ -43,7 +41,12 @@ public class MemoryUserDAO implements UserDAO {
     }
 
     @Override
-    public void clearData() {
+    public boolean clearData() {
         users.clear();
+        if (users.size() == 0) {
+            return true;
+        }
+        return false;
     }
+
 }

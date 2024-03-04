@@ -54,7 +54,11 @@ public class MemoryGameDAO implements GameDAO {
     }
 
     @Override
-    public void clearData() {
+    public boolean clearData() {
         games.clear();
+        if (games.size() == 0) {
+            return true;
+        }
+        return false;
     }
 }

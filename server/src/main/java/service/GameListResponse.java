@@ -12,4 +12,8 @@ public class GameListResponse extends Response {
         super(message);
         this.games = games;
     }
+
+    public List<GameData> getGameList() {
+        return games;
+    }
 }

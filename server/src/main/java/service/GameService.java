@@ -7,23 +7,19 @@ import chess.ChessGame.TeamColor;
 
 import java.util.List;
 
-public class GameService {
+public class GameService extends Service {
 
     AuthDAO authDAO;
     GameDAO gameDAO;
-    int errorCode = 0;
 
     public GameService(AuthDAO auth, GameDAO game) {
+        super();
         this.authDAO = auth;
         this.gameDAO = game;
     }
 
-    public int getErrorCode() {
-        return errorCode;
-    }
-
     public GameResponse newGame(GameRequest request, AuthData auth) {
-        errorCode = 0;
+        resetErrorCode();
         if (auth == null || !authDAO.validateAuth(auth)) {
             errorCode = 401;
             return new GameResponse("Error: unauthorized", null, null);
@@ -44,7 +40,7 @@ public class GameService {
     }
 
     public GameListResponse listGames(AuthData auth) {
-        errorCode = 0;
+        resetErrorCode();
         if (auth == null || !authDAO.validateAuth(auth)) {
             errorCode = 401;
             return new GameListResponse("Error: unauthorized", null);
@@ -58,7 +54,7 @@ public class GameService {
     }
 
     public GameResponse joinGame(AuthData auth, Integer gameID, String color) {
-        errorCode = 0;
+        resetErrorCode();
         GameData g = gameDAO.getGameData(gameID);
         if (g == null) {
             errorCode = 400;

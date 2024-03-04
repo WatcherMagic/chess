@@ -2,21 +2,23 @@ package dataAccess;
 
 import model.AuthData;
 
+import java.util.List;
+
 public interface AuthDAO {
 
-    public AuthData getAuth(String username);
+    AuthData getAuth(String username);
 
-    public AuthData getAuthFromToken(String authString);
+    AuthData getAuthFromToken(String authString);
 
-    public boolean validateAuth(AuthData auth);
+    boolean validateAuth(AuthData auth);
 
-    public AuthData createAuth(String username);
+    AuthData createAuth(String username);
 
-    public AuthData addAuth(AuthData auth);
+    AuthData addAuth(AuthData auth);
 
-    public void removeAuth(AuthData auth);
+    boolean removeAuth(AuthData auth);
 
-    public String generateAuth();
+    String generateAuth();
 
-    void clearData();
+    boolean clearData();
 }

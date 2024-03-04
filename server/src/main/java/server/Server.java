@@ -3,10 +3,14 @@ package server;
 import com.google.gson.Gson;
 import dataAccess.*;
 import model.AuthData;
+import model.GameData;
 import model.UserData;
 import service.*;
+import service.Service;
 import spark.*;
 import spark.Response;
+
+import java.util.List;
 
 import static spark.Spark.post;
 import static spark.Spark.delete;
@@ -18,7 +22,6 @@ public class Server {
     UserDAO userDAO;
     AuthDAO authDAO;
     GameDAO gameDAO;
-    Gson serializer = new Gson();
 
 
     public int run(int desiredPort) {
@@ -47,150 +50,68 @@ public class Server {
         gameDAO = new MemoryGameDAO();
     }
 
-    //no gameName: bad request
-    //null res obj: bad request
-    //joingame: no game ID = bad req
-
     private void createRoutes() {
 
+        Gson serializer = new Gson();
         UserService userService = new UserService(userDAO, authDAO);
 
         post("/user", (req, res) -> { //REGISTER
-            UserData newUser = serializer.fromJson(req.body(), UserData.class);
-            LoginAndRegisterResponse r = userService.register(newUser);
-            String s = serializer.toJson(r);
-            res.body(s);
-            if (userService.getErrorCode() != 0) {
-                if (userService.getErrorCode() == 400) { //bad request
-                    res.status(400);
-                }
-                else if (userService.getErrorCode() == 403) { //username already taken
-                    res.status(403);
-                }
-                else {
-                    res.status(500);
-                }
-            }
-            else { //success
-                res.status(200);
-            }
-            return res.body();
+            UserData u = serlializeUser(serializer, req);
 
-            //check to make sure status code is correct
+            LoginAndRegisterResponse r = userService.register(u);
+            res.body(serializer.toJson(r));
+
+            res.status(userService.getErrorCode());
+            return res.body();
         });
         post("/session", (req, res) -> { //LOGIN
-            UserData in = serializer.fromJson(req.body(), UserData.class);
-            LoginAndRegisterResponse r = userService.login(in);
+            UserData u = serlializeUser(serializer, req);
+
+            LoginAndRegisterResponse r = userService.login(u);
             res.body(serializer.toJson(r));
-            if (!r.userInfoNull()) { //username already taken
-                res.status(200);
-                return res.body();
-            }
-            else {
-                if (userService.getErrorCode() == 401) {
-                    res.status(401);
-                    return res.body();
-                }
-                else {
-                    res.status(500);
-                    return res.body();
-                }
-            }
+
+            res.status(userService.getErrorCode());
+            return res.body();
         });
         delete("/session", (req, res) -> { //LOGOUT
-            String authStr = req.headers("authorization");
-            AuthData auth = authDAO.getAuthFromToken(authStr);
-            LoginAndRegisterResponse out = userService.logout(auth);
-            String json = serializer.toJson(out);
-            res.body(json);
+            AuthData auth = authDAO.getAuthFromToken(getAuthStr(req));
 
-            int error = userService.getErrorCode();
-            if (userService.getErrorCode() != 0) {
-                if (userService.getErrorCode() == 401) { //unauthorized
-                    res.status(401);
-                }
-                else {
-                    res.status(500);
-                }
-            }
-            else { //success
-                res.status(200);
-            }
+            LoginAndRegisterResponse r = userService.logout(auth);
+            res.body(serializer.toJson(r));
+
+            res.status(userService.getErrorCode());
             return res.body();
         });
 
         GameService gameService = new GameService(authDAO, gameDAO);
 
         post("/game", (req, res) -> { //CREATE GAME
-            GameRequest newGame = serializer.fromJson(req.body(), GameRequest.class);
-            String authStr = req.headers("authorization");
-            AuthData auth = authDAO.getAuthFromToken(authStr);
-            GameResponse r = gameService.newGame(newGame, auth);
+            GameRequest game = serializeGame(serializer, req);
+            AuthData auth = authDAO.getAuthFromToken(getAuthStr(req));
+
+            GameResponse r = gameService.newGame(game, auth);
             res.body(serializer.toJson(r));
 
-            if (gameService.getErrorCode() != 0) {
-                if (gameService.getErrorCode() == 400) { //bad request
-                    res.status(400);
-                }
-                else if (gameService.getErrorCode() == 401) {
-                    res.status(401);
-                }
-                else if (gameService.getErrorCode() == 403) { //username already taken
-                    res.status(403);
-                }
-                else {
-                    res.status(500);
-                }
-            }
-            else { //success
-                res.status(200);
-            }
+            res.status(gameService.getErrorCode());
             return res.body();
         });
         get("/game", (req, res) -> { //LIST GAMES
-            String authStr = req.headers("authorization");
-            AuthData auth = authDAO.getAuthFromToken(authStr);
-            GameListResponse r = gameService.listGames(auth);
-            String s = serializer.toJson(r);
-            res.body(s);
+            AuthData auth = authDAO.getAuthFromToken(getAuthStr(req));
 
-            if (gameService.getErrorCode() != 0) {
-                if (gameService.getErrorCode() == 401) {
-                    res.status(401);
-                }
-                else {
-                    res.status(500);
-                }
-            }
-            else { //success
-                res.status(200);
-            }
+            GameListResponse r = gameService.listGames(auth);
+            res.body(serializer.toJson(r));
+
+            res.status(gameService.getErrorCode());
             return res.body();
         });
         put("/game",(req, res) -> { //JOIN GAME
-            GameRequest joinGame = serializer.fromJson(req.body(), GameRequest.class);
-            String authStr = req.headers("authorization");
-            AuthData auth = authDAO.getAuthFromToken(authStr);
-            GameResponse r = gameService.joinGame(auth, joinGame.gameID(), joinGame.playerColor());
+            GameRequest join = serializeGame(serializer, req);
+            AuthData auth = authDAO.getAuthFromToken(getAuthStr(req));
+
+            GameResponse r = gameService.joinGame(auth, join.gameID(), join.playerColor());
             res.body(serializer.toJson(r));
 
-            if (gameService.getErrorCode() != 0) {
-                if (gameService.getErrorCode() == 400) { //bad request
-                    res.status(400);
-                }
-                else if (gameService.getErrorCode() == 401) {
-                    res.status(401);
-                }
-                else if (gameService.getErrorCode() == 403) { //username already taken
-                    res.status(403);
-                }
-                else {
-                    res.status(500);
-                }
-            }
-            else { //success
-                res.status(200);
-            }
+            res.status(gameService.getErrorCode());
             return res.body();
         });
 
@@ -199,12 +120,25 @@ public class Server {
     }
 
     private Object clearDatabase(Request req, Response res) {
-        userDAO.clearData();
-        authDAO.clearData();
-        gameDAO.clearData();
-
-        res.status(200);
-        res.body("");
+        if (userDAO.clearData() && gameDAO.clearData() && authDAO.clearData()) {
+            res.status(200);
+            res.body("{}");
+            return res.body();
+        }
+        res.status(500);
+        res.body("{\"message\": \"Error: description\"}");
         return res.body();
+    }
+
+    private UserData serlializeUser(Gson serializer, spark.Request req) {
+        return serializer.fromJson(req.body(), UserData.class);
+    }
+
+    private GameRequest serializeGame(Gson serializer, spark.Request req) {
+        return serializer.fromJson(req.body(), GameRequest.class);
+    }
+
+    private String getAuthStr(spark.Request req) {
+        return req.headers("authorization");
     }
 }

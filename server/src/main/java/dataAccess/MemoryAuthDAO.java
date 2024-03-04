@@ -57,8 +57,12 @@ public class MemoryAuthDAO implements AuthDAO {
     }
 
     @Override
-    public void removeAuth(AuthData auth) {
+    public boolean removeAuth(AuthData auth) {
         tokens.remove(tokens.indexOf(auth));
+        if (tokens.indexOf(auth) == -1) {
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -67,7 +71,11 @@ public class MemoryAuthDAO implements AuthDAO {
     }
 
     @Override
-    public void clearData() {
+    public boolean clearData() {
         tokens.clear();
+        if (tokens.size() == 0) {
+            return true;
+        }
+        return false;
     }
 }

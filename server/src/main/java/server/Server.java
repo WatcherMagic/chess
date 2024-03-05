@@ -2,15 +2,14 @@ package server;
 
 import com.google.gson.Gson;
 import dataAccess.*;
+import dataAccess.memory.MemoryAuthDAO;
+import dataAccess.memory.MemoryGameDAO;
+import dataAccess.memory.MemoryUserDAO;
 import model.AuthData;
-import model.GameData;
 import model.UserData;
 import service.*;
-import service.Service;
 import spark.*;
 import spark.Response;
-
-import java.util.List;
 
 import static spark.Spark.post;
 import static spark.Spark.delete;

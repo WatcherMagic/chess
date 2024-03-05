@@ -10,10 +10,4 @@ public class LoginAndRegisterResponse extends Response {
         this.username = username;
     }
 
-    public boolean userInfoNull() {
-        if (authToken == null && username == null) {
-            return true;
-        }
-        return false;
-    }
 }

@@ -1,13 +1,11 @@
 package serviceTests;
 
 import dataAccess.AuthDAO;
-import dataAccess.MemoryAuthDAO;
-import dataAccess.MemoryUserDAO;
+import dataAccess.memory.MemoryAuthDAO;
+import dataAccess.memory.MemoryUserDAO;
 import dataAccess.UserDAO;
 import model.AuthData;
 import model.UserData;
-import org.eclipse.jetty.server.Authentication;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import service.UserService;
 

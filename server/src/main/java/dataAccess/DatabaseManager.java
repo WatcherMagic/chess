@@ -18,6 +18,7 @@ public class DatabaseManager {
                 if (propStream == null) throw new Exception("Unable to load db.properties");
                 Properties props = new Properties();
                 props.load(propStream);
+
                 databaseName = props.getProperty("db.name");
                 user = props.getProperty("db.user");
                 password = props.getProperty("db.password");
@@ -51,21 +52,25 @@ public class DatabaseManager {
 
     static void createTables() throws DataAccessException {
         try {
-            var statement = """
-                    CREATE TABLE IF NOT EXISTS auth_data (
-                        username varchar(60) NOT NULL,
-                        token varchar(60)) NOT NULL
-                    """;
             var conn = DriverManager.getConnection(connectionUrl, user, password);
+            conn.setCatalog("chess");
+
+            var statement = """
+                    CREATE TABLE IF NOT EXISTS user_data (
+                        username varchar(60) NOT NULL,
+                        password varchar(60) NOT NULL,
+                        email varchar(100) NOT NULL,
+                        PRIMARY KEY (username)
+                    )""";
             try (var preparedStatement = conn.prepareStatement(statement)) {
                 preparedStatement.executeUpdate();
             }
             statement = """
-                    CREATE TABLE IF NOT EXISTS user_data (
+                    CREATE TABLE IF NOT EXISTS auth_data (
                         username varchar(60) NOT NULL,
-                        password varchar(60) NOT NULL,
-                        email varchar(100) NOT NULL)
-                    """;
+                        token varchar(60) NOT NULL,
+                        PRIMARY KEY (username)
+                    )""";
             try (var preparedStatement = conn.prepareStatement(statement)) {
                 preparedStatement.executeUpdate();
             }
@@ -75,8 +80,9 @@ public class DatabaseManager {
                     white_username varchar(60),
                     black_username varchar(60),
                     game_name varchar(60),
-                    game varchar(200))
-                """;
+                    game varchar(200),
+                    PRIMARY KEY (id)
+                )""";
             try (var preparedStatement = conn.prepareStatement(statement)) {
                 preparedStatement.executeUpdate();
             }

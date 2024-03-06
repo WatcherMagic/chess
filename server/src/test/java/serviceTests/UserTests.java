@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class UserTests {
 
     @Test
-    void getUser() {
+    void getUser() throws DataAccessException {
         UserDAO memDAO = new MemoryUserDAO();
         UserData u = new UserData("WatcherMagic", "apassword", "mailll");
         memDAO.addUser(u);
@@ -25,7 +25,7 @@ class UserTests {
     }
 
     @Test
-    void containsUser() {
+    void containsUser() throws DataAccessException {
         UserDAO memDAO = new MemoryUserDAO();
         UserData u = new UserData("WatcherMagic", "password", "mail");
         memDAO.addUser(u);

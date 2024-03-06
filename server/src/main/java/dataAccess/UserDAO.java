@@ -1,16 +1,17 @@
 package dataAccess;
 
+import com.mysql.cj.exceptions.DataReadException;
 import model.UserData;
 
 import java.util.List;
 
 public interface UserDAO {
 
-    void addUser(UserData user);
+    void addUser(UserData user) throws DataAccessException;
 
-    UserData getUser(String username);
+    UserData getUser(String username) throws DataAccessException;
 
-    int containsUser(String username);
+    int containsUser(String username) throws DataAccessException;
 
-    boolean clearData();
+    boolean clearData() throws DataAccessException;
 }

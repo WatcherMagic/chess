@@ -1,6 +1,7 @@
 package service;
 
 import dataAccess.AuthDAO;
+import dataAccess.DataAccessException;
 import dataAccess.UserDAO;
 import model.AuthData;
 import model.UserData;
@@ -16,7 +17,7 @@ public class UserService extends Service {
         this.authDAO = auth;
     }
 
-    public LoginAndRegisterResponse register(UserData newUser) {
+    public LoginAndRegisterResponse register(UserData newUser) throws DataAccessException {
         resetErrorCode();
         if (newUser == null || newUser.username() == null
                 || newUser.password() == null || newUser.email() == null) {
@@ -41,7 +42,7 @@ public class UserService extends Service {
         }
     }
 
-    public LoginAndRegisterResponse login(UserData user) {
+    public LoginAndRegisterResponse login(UserData user) throws DataAccessException {
         resetErrorCode();
         if (userDAO.containsUser(user.username()) != -1
                 && userDAO.getUser(user.username()).password().equals(user.password())) {
@@ -56,7 +57,7 @@ public class UserService extends Service {
         }
     }
 
-    public LoginAndRegisterResponse logout(AuthData auth) {
+    public LoginAndRegisterResponse logout(AuthData auth) throws DataAccessException {
         resetErrorCode();
         if (auth == null || !authDAO.getAuth(auth.username()).token().equals(auth.token())) {
             //unauthorized

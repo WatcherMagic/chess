@@ -1,6 +1,7 @@
 package serviceTests;
 
 import dataAccess.AuthDAO;
+import dataAccess.DataAccessException;
 import dataAccess.memory.MemoryAuthDAO;
 import dataAccess.memory.MemoryUserDAO;
 import dataAccess.UserDAO;
@@ -34,7 +35,7 @@ class UserTests {
     }
 
     @Test
-    void getAuth() {
+    void getAuth() throws DataAccessException {
         AuthData auth = new AuthData("WatcherMagic", "123");
         AuthDAO autHDAO = new MemoryAuthDAO();
         autHDAO.addAuth(auth);
@@ -43,7 +44,7 @@ class UserTests {
     }
 
     @Test
-    void addNewUser() {
+    void addNewUser() throws DataAccessException {
         UserDAO user = new MemoryUserDAO();
         AuthDAO auth = new MemoryAuthDAO();
         UserService register = new UserService(user, auth);
@@ -54,7 +55,7 @@ class UserTests {
     }
 
     @Test
-    public void authRefreshedOnSuccessfulLogin() {
+    public void authRefreshedOnSuccessfulLogin() throws DataAccessException {
         UserDAO userDAO = new MemoryUserDAO();
         AuthDAO authDAO = new MemoryAuthDAO();
         UserService userService = new UserService(userDAO, authDAO);
@@ -71,7 +72,7 @@ class UserTests {
     }
 
     @Test
-    public void authRefreshFailOnUnsuccessfulLogin() {
+    public void authRefreshFailOnUnsuccessfulLogin() throws DataAccessException {
         UserDAO userDAO = new MemoryUserDAO();
         AuthDAO authDAO = new MemoryAuthDAO();
         UserService userService = new UserService(userDAO, authDAO);
@@ -87,7 +88,7 @@ class UserTests {
     }
 
     @Test
-    public void logout() {
+    public void logout() throws DataAccessException {
         UserDAO userDAO = new MemoryUserDAO();
         AuthDAO authDAO = new MemoryAuthDAO();
         UserService userService = new UserService(userDAO, authDAO);

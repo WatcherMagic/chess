@@ -18,7 +18,7 @@ public class GameService extends Service {
         this.gameDAO = game;
     }
 
-    public GameResponse newGame(GameRequest request, AuthData auth) {
+    public GameResponse newGame(GameRequest request, AuthData auth) throws DataAccessException {
         resetErrorCode();
         if (auth == null || !authDAO.validateAuth(auth)) {
             errorCode = 401;
@@ -39,7 +39,7 @@ public class GameService extends Service {
         return new GameResponse("Error: description", null, null);
     }
 
-    public GameListResponse listGames(AuthData auth) {
+    public GameListResponse listGames(AuthData auth) throws DataAccessException {
         resetErrorCode();
         if (auth == null || !authDAO.validateAuth(auth)) {
             errorCode = 401;
@@ -53,7 +53,7 @@ public class GameService extends Service {
         return new GameListResponse("Error: description", null);
     }
 
-    public GameResponse joinGame(AuthData auth, Integer gameID, String color) {
+    public GameResponse joinGame(AuthData auth, Integer gameID, String color) throws DataAccessException {
         resetErrorCode();
         GameData g = gameDAO.getGameData(gameID);
         if (g == null) {

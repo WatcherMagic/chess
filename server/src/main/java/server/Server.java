@@ -44,9 +44,9 @@ public class Server {
     }
 
     private void initializeDAOs() {
-        userDAO = new MemoryUserDAO();
-        authDAO = new MemoryAuthDAO();
-        gameDAO = new MemoryGameDAO();
+        userDAO = new SQLUserDAO();
+        authDAO = new SQLAuthDAO();
+        gameDAO = new SQLGameDAO();
     }
 
     private void createRoutes() {
@@ -118,7 +118,7 @@ public class Server {
 
     }
 
-    private Object clearDatabase(Request req, Response res) {
+    private Object clearDatabase(Request req, Response res) throws DataAccessException {
         if (userDAO.clearData() && gameDAO.clearData() && authDAO.clearData()) {
             res.status(200);
             res.body("{}");

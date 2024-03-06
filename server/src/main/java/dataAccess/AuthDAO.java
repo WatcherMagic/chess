@@ -6,19 +6,19 @@ import java.util.List;
 
 public interface AuthDAO {
 
-    AuthData getAuth(String username);
+    AuthData getAuth(String username) throws DataAccessException;
 
-    AuthData getAuthFromToken(String authString);
+    AuthData getAuthFromToken(String authString) throws DataAccessException;
 
-    boolean validateAuth(AuthData auth);
+    boolean validateAuth(AuthData auth) throws DataAccessException;
 
-    AuthData createAuth(String username);
+    AuthData createAuth(String username) throws DataAccessException;
 
-    AuthData addAuth(AuthData auth);
+    AuthData addAuth(AuthData auth) throws DataAccessException;
 
-    boolean removeAuth(AuthData auth);
+    boolean removeAuth(AuthData auth) throws DataAccessException;
 
     String generateAuth();
 
-    boolean clearData();
+    boolean clearData() throws DataAccessException;
 }

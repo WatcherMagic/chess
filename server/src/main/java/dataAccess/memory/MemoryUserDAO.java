@@ -17,23 +17,12 @@ public class MemoryUserDAO implements UserDAO {
 
     @Override
     public UserData getUser(String username) {
-        int i = containsUser(username);
-        if (i != -1) {
-            return users.get(i);
-        }
-        else {
-            return null;
-        }
-    }
-
-    @Override
-    public int containsUser(String username) {
         for (UserData user : users) {
             if (user.username().equals(username)) {
-                return users.indexOf(user);
+                return user;
             }
         }
-        return -1;
+        return null;
     }
 
     @Override

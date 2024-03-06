@@ -25,16 +25,6 @@ class UserTests {
     }
 
     @Test
-    void containsUser() throws DataAccessException {
-        UserDAO memDAO = new MemoryUserDAO();
-        UserData u = new UserData("WatcherMagic", "password", "mail");
-        memDAO.addUser(u);
-
-        assertNotEquals(memDAO.containsUser("WatcherMagic"), -1);
-        assertEquals(memDAO.containsUser("Joe"), -1);
-    }
-
-    @Test
     void getAuth() throws DataAccessException {
         AuthData auth = new AuthData("WatcherMagic", "123");
         AuthDAO autHDAO = new MemoryAuthDAO();
@@ -50,7 +40,6 @@ class UserTests {
         UserService register = new UserService(user, auth);
         register.register(new UserData("WatcherMagic", "superawesomepassword", "spam"));
 
-        assertNotEquals(user.containsUser("WatcherMagic"), -1);
         assertNotEquals(auth.getAuth("WatcherMagic"), null);
     }
 

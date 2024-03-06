@@ -11,7 +11,5 @@ public interface UserDAO {
 
     UserData getUser(String username) throws DataAccessException;
 
-    int containsUser(String username) throws DataAccessException;
-
     boolean clearData() throws DataAccessException;
 }

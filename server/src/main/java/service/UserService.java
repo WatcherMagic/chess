@@ -44,8 +44,7 @@ public class UserService extends Service {
 
     public LoginAndRegisterResponse login(UserData user) throws DataAccessException {
         resetErrorCode();
-        if (userDAO.containsUser(user.username()) != -1
-                && userDAO.getUser(user.username()).password().equals(user.password())) {
+        if (userDAO.getUser(user.username()) != null && userDAO.getUser(user.username()).password().equals(user.password())) {
 
             AuthData newAuth = authDAO.createAuth(user.username());
             authDAO.addAuth(newAuth);

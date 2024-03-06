@@ -41,11 +41,6 @@ public class SQLUserDAO implements UserDAO {
     }
 
     @Override
-    public int containsUser(String username) {
-        return 0;
-    }
-
-    @Override
     public boolean clearData() throws DataAccessException {
         try (var conn = DatabaseManager.getConnection()) {
             try (var preparedStatement = conn.prepareStatement("TRUNCATE user_data")) {

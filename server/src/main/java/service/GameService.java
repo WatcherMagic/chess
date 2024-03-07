@@ -77,8 +77,10 @@ public class GameService extends Service {
                 errorCode = 403;
                 return new GameResponse("Error: already taken", null, null);
             }
+            if (c != null) {
+                gameDAO.addParticipant(gameID, auth.username(), c);
+            }
             //success
-            gameDAO.addParticipant(gameID, auth.username(), c);
             return new GameResponse(null, null, null);
         }
         else if (!authDAO.validateAuth(auth)) {

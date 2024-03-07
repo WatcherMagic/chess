@@ -49,7 +49,7 @@ public class SQLAuthDAO implements AuthDAO {
 
     @Override
     public boolean validateAuth(AuthData auth) throws DataAccessException {
-        if (auth != null && getAuthFromToken(auth.token()).equals(auth)) {
+        if (auth.token() != null && getAuthFromToken(auth.token()).equals(auth)) {
             return true;
         }
         else {
@@ -81,8 +81,9 @@ public class SQLAuthDAO implements AuthDAO {
     @Override
     public boolean removeAuth(AuthData auth) throws DataAccessException {
         try (var conn = DatabaseManager.getConnection()) {
-            try (var preparedStatement = conn.prepareStatement("DELETE FROM auth_data WHERE username=?")) {
-                preparedStatement.setString(1, auth.username());
+            try (var preparedStatement = conn.prepareStatement("DELETE FROM auth_data WHERE token=? AND username=?")) {
+                preparedStatement.setString(1, auth.token());
+                preparedStatement.setString(2, auth.username());
                 preparedStatement.executeUpdate();
                 return true;
             }

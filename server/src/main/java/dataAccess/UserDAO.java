@@ -9,6 +9,10 @@ public interface UserDAO {
 
     void addUser(UserData user) throws DataAccessException;
 
+    String hashPassword(String password);
+
+    boolean verifyPassword(String username, String password) throws DataAccessException;
+
     UserData getUser(String username) throws DataAccessException;
 
     boolean clearData() throws DataAccessException;

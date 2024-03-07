@@ -2,6 +2,7 @@ package dataAccess;
 
 import model.AuthData;
 import model.UserData;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.sql.SQLException;
 
@@ -17,6 +18,19 @@ public class SQLUserDAO implements UserDAO {
         } catch (DataAccessException | SQLException ex) {
             throw new DataAccessException(ex.getMessage());
         }
+    }
+
+    @Override
+    public String hashPassword(String password) {
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        return encoder.encode(password);
+    }
+
+    @Override
+    public boolean verifyPassword(String username, String password) throws DataAccessException {
+        String hashed = getUser(username).password();
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        return encoder.matches(password, hashed);
     }
 
     @Override

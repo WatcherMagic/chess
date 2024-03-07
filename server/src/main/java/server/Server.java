@@ -119,7 +119,7 @@ public class Server {
     }
 
     private Object clearDatabase(Request req, Response res) throws DataAccessException {
-        if (userDAO.clearData() && gameDAO.clearData() && authDAO.clearData()) {
+        if (gameDAO.clearData() && authDAO.clearData() && userDAO.clearData()) {
             res.status(200);
             res.body("{}");
             return res.body();
@@ -138,6 +138,7 @@ public class Server {
     }
 
     private String getAuthStr(spark.Request req) {
-        return req.headers("authorization");
+        String token = req.headers("authorization");
+        return token;
     }
 }

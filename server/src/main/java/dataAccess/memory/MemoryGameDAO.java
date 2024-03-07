@@ -1,6 +1,7 @@
 package dataAccess.memory;
 
 import chess.ChessGame;
+import dataAccess.DataAccessException;
 import dataAccess.GameDAO;
 import model.GameData;
 
@@ -18,7 +19,7 @@ public class MemoryGameDAO implements GameDAO {
     }
 
     @Override
-    public int createGame(String gameName) {
+    public int addNewGame(String gameName) throws DataAccessException {
         gameIDIncrement += 1;
         GameData game = new GameData(gameIDIncrement, null, null, gameName, new ChessGame());
         games.add(game);
@@ -26,7 +27,7 @@ public class MemoryGameDAO implements GameDAO {
     }
 
     @Override
-    public GameData getGameData(int gameID) {
+    public GameData getGameData(int gameID) throws DataAccessException {
         for (GameData gamedata : games) {
             if (gamedata.gameID() == gameID) {
                 return gamedata;
@@ -36,12 +37,12 @@ public class MemoryGameDAO implements GameDAO {
     }
 
     @Override
-    public List<GameData> getGameList() {
+    public List<GameData> getGameList() throws DataAccessException {
         List<GameData> list = new ArrayList<>(games);
         return list;
     }
 
-    public void addParticipant(int gameID, String username, ChessGame.TeamColor color) {
+    public void addParticipant(int gameID, String username, ChessGame.TeamColor color) throws DataAccessException {
         GameData game = getGameData(gameID);
         int index = games.indexOf(game);
         if (color == ChessGame.TeamColor.WHITE) {
@@ -55,7 +56,7 @@ public class MemoryGameDAO implements GameDAO {
     }
 
     @Override
-    public boolean clearData() {
+    public boolean clearData() throws DataAccessException {
         games.clear();
         if (games.size() == 0) {
             return true;

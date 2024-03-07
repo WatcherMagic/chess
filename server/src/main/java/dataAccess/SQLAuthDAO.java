@@ -49,7 +49,7 @@ public class SQLAuthDAO implements AuthDAO {
 
     @Override
     public boolean validateAuth(AuthData auth) throws DataAccessException {
-        if (auth != null && getAuthFromToken(auth.token()) == auth) {
+        if (auth != null && getAuthFromToken(auth.token()).equals(auth)) {
             return true;
         }
         else {

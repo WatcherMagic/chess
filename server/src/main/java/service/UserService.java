@@ -5,6 +5,8 @@ import dataAccess.DataAccessException;
 import dataAccess.UserDAO;
 import model.AuthData;
 import model.UserData;
+import org.eclipse.jetty.server.Authentication;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 public class UserService extends Service {
 
@@ -26,8 +28,9 @@ public class UserService extends Service {
             return new LoginAndRegisterResponse("Error: bad request", null, null);
         }
         else {
-            if (userDAO.getUser(newUser.username()) == null) {
-                userDAO.addUser(newUser);
+            if (userDAO.getUser(newUser.username()).username() == null) {
+                String hashedPassword = userDAO.hashPassword(newUser.password());
+                userDAO.addUser(new UserData(newUser.username(), hashedPassword, newUser.email()));
 
                 AuthData auth = authDAO.createAuth(newUser.username());
                 authDAO.addAuth(auth);
@@ -44,8 +47,7 @@ public class UserService extends Service {
 
     public LoginAndRegisterResponse login(UserData user) throws DataAccessException {
         resetErrorCode();
-        if (userDAO.getUser(user.username()) != null && userDAO.getUser(user.username()).password().equals(user.password())) {
-
+        if (userDAO.getUser(user.username()).username() != null && userDAO.verifyPassword(user.username(), user.password())) {
             AuthData newAuth = authDAO.createAuth(user.username());
             authDAO.addAuth(newAuth);
             return new LoginAndRegisterResponse(null, user.username(), newAuth.token());
@@ -58,7 +60,7 @@ public class UserService extends Service {
 
     public LoginAndRegisterResponse logout(AuthData auth) throws DataAccessException {
         resetErrorCode();
-        if (auth == null || !authDAO.getAuth(auth.username()).token().equals(auth.token())) {
+        if (auth == null || !authDAO.validateAuth(auth)) {
             //unauthorized
             errorCode = 401;
             return new LoginAndRegisterResponse("Error: unauthorized", null, null);

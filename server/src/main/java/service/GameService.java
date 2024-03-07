@@ -26,8 +26,8 @@ public class GameService extends Service {
         }
         else if (authDAO.validateAuth(auth)) {
             if (request.gameName() != null) {
-                int newGameID = gameDAO.createGame(request.gameName());
-                return new GameResponse(null, newGameID, null);
+                int gameID = gameDAO.addNewGame(request.gameName());
+                return new GameResponse(null, gameID, null);
             }
             else {
                 //bad request

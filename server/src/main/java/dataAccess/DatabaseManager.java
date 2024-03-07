@@ -69,7 +69,7 @@ public class DatabaseManager {
                     CREATE TABLE IF NOT EXISTS auth_data (
                         username varchar(60) NOT NULL,
                         token varchar(60) NOT NULL,
-                        PRIMARY KEY (username)
+                        PRIMARY KEY (token)
                     )""";
             try (var preparedStatement = conn.prepareStatement(statement)) {
                 preparedStatement.executeUpdate();

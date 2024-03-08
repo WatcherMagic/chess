@@ -53,7 +53,7 @@ public class DatabaseManager {
     static void createTables() throws DataAccessException {
         try {
             var conn = DriverManager.getConnection(connectionUrl, user, password);
-            conn.setCatalog("chess");
+            conn.setCatalog(databaseName);
 
             var statement = """
                     CREATE TABLE IF NOT EXISTS user_data (

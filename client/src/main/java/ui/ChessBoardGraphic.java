@@ -5,85 +5,131 @@ import chess.ChessGame;
 import chess.ChessPiece;
 import chess.ChessPosition;
 
-import javax.lang.model.type.NullType;
+import java.util.ArrayList;
+import java.util.List;
 
-import static chess.ChessPiece.PieceType.*;
+import static ui.EscapeSequences.*;
+
 import static java.lang.Character.toUpperCase;
 
 public class ChessBoardGraphic {
 
-    String emptyBoard = """
-                A   B   C   D   E   F   G   H  
-            --|---|---|---|---|---|---|---|---|
-            1 | \u2003 | \u2003 | \u2003 | \u2003 | \u2003 | \u2003 | \u2003 | \u2003 |
-            --|---|---|---|---|---|---|---|---|
-            2 | \u2003 | \u2003 | \u2003 | \u2003 | \u2003 | \u2003 | \u2003 | \u2003 |
-            --|---|---|---|---|---|---|---|---|
-            3 | \u2003 | \u2003 | \u2003 | \u2003 | \u2003 | \u2003 | \u2003 | \u2003 |
-            --|---|---|---|---|---|---|---|---|
-            4 | \u2003 | \u2003 | \u2003 | \u2003 | \u2003 | \u2003 | \u2003 | \u2003 |
-            --|---|---|---|---|---|---|---|---|
-            5 | \u2003 | \u2003 | \u2003 | \u2003 | \u2003 | \u2003 | \u2003 | \u2003 |
-            --|---|---|---|---|---|---|---|---|
-            6 | \u2003 | \u2003 | \u2003 | \u2003 | \u2003 | \u2003 | \u2003 | \u2003 |
-            --|---|---|---|---|---|---|---|---|
-            7 | \u2003 | \u2003 | \u2003 | \u2003 | \u2003 | \u2003 | \u2003 | \u2003 |
-            --|---|---|---|---|---|---|---|---|
-            8 | \u2003 | \u2003 | \u2003 | \u2003 | \u2003 | \u2003 | \u2003 | \u2003 |
-            --|---|---|---|---|---|---|---|---|
-            """;
-    String chessBoard = emptyBoard;
+    String chessBoard;
     ChessBoard boardData;
     int[] boardPosIndexes;
 
     public ChessBoardGraphic(ChessBoard boardData) {
         this.boardData = boardData;
-        this.boardPosIndexes = getBoardPositions();
+        this.chessBoard = constructEmptyBoardString();
+        this.boardPosIndexes = getBoardSpaceStringIndexes();
     }
 
-    public int[] getBoardPositions() {
-        char[] boardStringArray = emptyBoard.toCharArray();
+    public int[] getBoardSpaceStringIndexes() {
+        char[] boardStringArray = chessBoard.toCharArray();
 
         int[] boardPositionsFromA1toH8 = new int[64];
-        int posArrayIndex = 0;
+        int arrayIndex = 0;
 
         for (int i = 0; i < boardStringArray.length; i++) {
-            if (boardStringArray[i] == '\u2003') {
-                boardPositionsFromA1toH8[posArrayIndex] = i;
+            if (boardStringArray[i] == '#') {
+                boardPositionsFromA1toH8[arrayIndex] = i;
+                ++arrayIndex;
             }
         }
 
         return boardPositionsFromA1toH8;
     }
 
-    public void updateBoardString() {
-        //untested -- need to finish display method first
+    private List<String> constructEmptyBoardList() {
+        List<String> newBoard = new ArrayList<>();
 
-        ChessPiece pieceAt = null;
-        int indexAt = 0;
-        char[] boardStringArray = chessBoard.toCharArray();
-        char updateChar = ' ';
+        newBoard.add(SET_BG_COLOR_WHITE);
+        newBoard.add("   A ");
+        newBoard.add(" B ");
+        newBoard.add(" C ");
+        newBoard.add(" D ");
+        newBoard.add(" E ");
+        newBoard.add(" F ");
+        newBoard.add(" G ");
+        newBoard.add(" H ");
 
-        for (int x = 0; x < boardData.getBoardLength(); x++) {
-            for (int y = 0; y < boardData.getBoardLength(); y++) {
-                pieceAt = boardData.getPiece(new ChessPosition(x, y));
-                updateChar = getCharForPiece(pieceAt);
 
-                //
+        String lightDark = SET_BG_COLOR_LIGHT_GREY + " # ";
+        String darkLight = SET_BG_COLOR_DARK_GREY + " # ";
+
+        for (int i = 1; i <= 8; i++) {
+            newBoard.add(SET_BG_COLOR_WHITE);
+            newBoard.add(SET_TEXT_COLOR_BLACK);
+            newBoard.add("\n");
+            newBoard.add(i + " ");
+            newBoard.add(SET_TEXT_COLOR_WHITE);
+
+            for (int x = 0; x < 4; x++) {
+                if (i % 2 == 0) {
+                    newBoard.add(darkLight);
+                    newBoard.add(lightDark);
+                }
+                else {
+                    newBoard.add(lightDark);
+                    newBoard.add(darkLight);
+                }
             }
         }
+        newBoard.add(SET_BG_COLOR_WHITE);
+        newBoard.add(SET_TEXT_COLOR_BLACK);
+        newBoard.add("\n");
+
+        return newBoard;
     }
 
-    public char getCharForPiece(ChessPiece piece) {
+    private String constructEmptyBoardString() {
+        List<String> list = constructEmptyBoardList();
+        String board = "";
+
+        for(int i = 0; i < list.size(); i++) {
+            board = board.concat(list.get(i));
+        }
+
+        return board;
+    }
+
+    public void printBoard() {
+        System.out.print(chessBoard);
+    }
+
+    public String updateBoardString() {
+        //untested -- need to finish display method first
+
+        ChessPiece pieceAt;
+        int indexAt = 0;
+        char[] boardCharArray = chessBoard.toCharArray();
+        char updateChar;
+
+        for (int x = 1; x <= boardData.getBoardLength(); x++) {
+            for (int y = 1; y <= boardData.getBoardLength(); y++) {
+                pieceAt = boardData.getPiece(new ChessPosition(x, y));
+                updateChar = getTextCharForPiece(pieceAt);
+
+                boardCharArray[boardPosIndexes[indexAt]] = updateChar;
+                indexAt++;
+            }
+        }
+
+        chessBoard = String.valueOf(boardCharArray);
+        return chessBoard;
+    }
+
+    public char getTextCharForPiece(ChessPiece piece) {
 
         if (piece == null) {
-            return '\u2003';
+            return ' ';
         }
 
         char pieceChar = 'X';
         ChessPiece.PieceType type = piece.getPieceType();
+        ChessGame.TeamColor color = piece.getTeamColor();
 
-        if (type == null || piece.getPieceType() == null) {
+        if (type == null || color == null) {
             return pieceChar;
         }
 
@@ -108,8 +154,7 @@ public class ChessBoardGraphic {
                 break;
         }
 
-        ChessGame.TeamColor color = piece.getTeamColor();
-        if (piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
+        if (color == ChessGame.TeamColor.WHITE) {
             pieceChar = toUpperCase(pieceChar);
         }
 

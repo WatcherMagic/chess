@@ -23,12 +23,12 @@ public class BoardGraphicTests {
     void getPieceCharMethodWorks() {
         ChessBoardGraphic graphic = new ChessBoardGraphic(board);
 
-        char c = graphic.getCharForPiece(new ChessPiece(BLACK, KING));
+        char c = graphic.getTextCharForPiece(new ChessPiece(BLACK, KING));
         assertNotEquals('X', c, "the piece type could not be determined");
         assertEquals('k', c, "method returned the wrong character");
 
         ChessPiece piece = new ChessPiece(WHITE, PAWN);
-        c = graphic.getCharForPiece(piece);
+        c = graphic.getTextCharForPiece(piece);
         assertNotEquals('p', c, "the character failed to be capitalized");
         assertEquals('P', c, "wrong capitzalization or character");
     }
@@ -57,7 +57,7 @@ public class BoardGraphicTests {
         char testChar = ' ';
 
         for (int i = 0; i < 12; i++) {
-            testChar = graphic.getCharForPiece(pieces[i]);
+            testChar = graphic.getTextCharForPiece(pieces[i]);
             assertNotEquals('X', testChar, "the piece type is missing");
             assertEquals(pieceChars[i], testChar, "the wrong color was returned");
         }
@@ -68,10 +68,25 @@ public class BoardGraphicTests {
     void getCharsForPiecesFails() {
         ChessBoardGraphic graphic = new ChessBoardGraphic(board);
 
-        char c = graphic.getCharForPiece(new ChessPiece(null, null));
+        char c = graphic.getTextCharForPiece(new ChessPiece(null, null));
         assertEquals('X', c, "something bad happened!");
 
-        c = graphic.getCharForPiece(null);
+        c = graphic.getTextCharForPiece(null);
         assertEquals('\u2003', c);
+    }
+
+    @Test
+    void printBoardBlackDown() {
+        board.resetBoard();
+        ChessBoardGraphic graphic = new ChessBoardGraphic(board);
+
+        graphic.printBoard();
+        graphic.updateBoardString();
+        graphic.printBoard();
+    }
+
+    @Test
+    void printBoardWhiteDown() {
+
     }
 }

@@ -21,7 +21,86 @@ public class ChessBoardGraphic {
 
     public ChessBoardGraphic(ChessBoard boardData) {
         this.boardData = boardData;
-        this.chessBoard = constructEmptyBoardString(constructEmptyBoardSpaces());
+        this.chessBoard = constructEmptyBoardString(constructEmptyBoardSpaces(false), false);
+    }
+
+    public List<String> constructEmptyBoardSpaces(boolean flipped) {
+        List<String> newBoard = new ArrayList<>();
+
+        String lightGray = SET_BG_COLOR_LIGHT_GREY + " # ";
+        String darkGray = SET_BG_COLOR_DARK_GREY + " # ";
+
+        if (flipped) {
+            newBoard.add("\n");
+            newBoard.add(SET_BG_COLOR_WHITE);
+        }
+        for (int i = 1; i <= 8; i++) {
+            if(flipped) {
+                newBoard.add("\n");
+                newBoard.add(SET_BG_COLOR_WHITE);
+            }
+            for (int x = 0; x < 4; x++) {
+                if (i % 2 == 0) {
+                    newBoard.add(darkGray);
+                    newBoard.add(lightGray);
+                }
+                else {
+                    newBoard.add(lightGray);
+                    newBoard.add(darkGray);
+                }
+            }
+            if (!flipped) {
+                newBoard.add(SET_BG_COLOR_WHITE);
+                newBoard.add("\n");
+            }
+        }
+        if (!flipped) {
+            newBoard.add(SET_BG_COLOR_WHITE);
+            newBoard.add("\n");
+        }
+
+        return newBoard;
+    }
+
+    public String constructEmptyBoardString(List<String> list, boolean flipped) {
+        String board = "";
+        int rowIncrement = 2;
+
+        if (flipped) {
+            rowIncrement = 7;
+            board = board.concat(SET_BG_COLOR_WHITE + SET_TEXT_COLOR_BLACK +
+                    "   H  G  F  E  D  C  B  A\n8 " + SET_TEXT_COLOR_WHITE);
+        }
+        else {
+            board = board.concat(SET_BG_COLOR_WHITE + SET_TEXT_COLOR_BLACK +
+                    "   A  B  C  D  E  F  G  H\n1 " + SET_TEXT_COLOR_WHITE);
+        }
+
+        int incrementLimit = 9;
+        if (flipped) {
+            incrementLimit = 0;
+        }
+
+        for(int i = 0; i < list.size(); i++) {
+            board = board.concat(list.get(i));
+            if (list.get(i).equals("\n") && rowIncrement != incrementLimit) {
+                board = board.concat(SET_TEXT_COLOR_BLACK);
+                board = board.concat(rowIncrement + " " + SET_TEXT_COLOR_WHITE);
+                if (flipped) {
+                    rowIncrement--;
+                }
+                else {
+                    rowIncrement++;
+                }
+            }
+        }
+
+        return board;
+    }
+
+    public void printBoard() {
+        System.out.print(chessBoard);
+        System.out.print(reverseBoardString());
     }
 
     public int[] getBoardSpaceStringIndexes(char[] boardStringArray) {
@@ -39,78 +118,34 @@ public class ChessBoardGraphic {
         return boardPositionsFromA1toH8;
     }
 
-    public List<String> constructEmptyBoardSpaces() {
-        List<String> newBoard = new ArrayList<>();
+    public void updateBoardString() {
 
-        String lightGray = SET_BG_COLOR_LIGHT_GREY + " # ";
-        String darkGray = SET_BG_COLOR_DARK_GREY + " # ";
+        ChessPiece pieceAt;
+        char[] boardCharArray = chessBoard.toCharArray();
+        int[] boardPosIndexes = getBoardSpaceStringIndexes(boardCharArray);
 
-        for (int i = 1; i <= 8; i++) {
-            for (int x = 0; x < 4; x++) {
-                if (i % 2 == 0) {
-                    newBoard.add(darkGray);
-                    newBoard.add(lightGray);
-                }
-                else {
-                    newBoard.add(lightGray);
-                    newBoard.add(darkGray);
-                }
-            }
-            newBoard.add(SET_BG_COLOR_WHITE);
-            newBoard.add("\n");
-        }
-        newBoard.add(SET_BG_COLOR_WHITE);
-        newBoard.add("\n");
+        char updateChar;
+        int indexAt = 0;
 
-        return newBoard;
-    }
+        for (int x = 1; x <= boardData.getBoardLength(); x++) {
+            for (int y = 1; y <= boardData.getBoardLength(); y++) {
+                pieceAt = boardData.getPiece(new ChessPosition(x, y));
+                updateChar = getTextCharForPiece(pieceAt);
 
-    public String constructEmptyBoardString(List<String> list) {
-        String board = "";
-        board = board.concat(SET_BG_COLOR_WHITE + "   A  B  C  D  E  F  G  H\n1 " + SET_TEXT_COLOR_WHITE);
-
-        int colIncrement = 0;
-        int rowIncrement = 2;
-        for(int i = 0; i < list.size(); i++) {
-            board = board.concat(list.get(i));
-            if (list.get(i).equals("\n") && rowIncrement < 9) {
-                board = board.concat(SET_TEXT_COLOR_BLACK
-                        + rowIncrement + " " + SET_TEXT_COLOR_WHITE);
-                rowIncrement++;
+                boardCharArray[boardPosIndexes[indexAt]] = updateChar;
+                indexAt++;
             }
         }
 
-        return board;
-    }
-
-    public void updateBoardString(String s) {
-        chessBoard = s;
-    }
-
-    public void printBoard() {
-        System.out.print(chessBoard);
-        System.out.print(reverseBoardString());
+        chessBoard = String.valueOf(boardCharArray);
     }
 
     public String reverseBoardString() {
-        List<String> board = constructEmptyBoardSpaces();
-        Collections.reverse(board);
+        List<String> flipped = constructEmptyBoardSpaces(true);
+        Collections.reverse(flipped);
 
-        List<String> flippedBoard = new ArrayList<>();
-        flippedBoard.add(SET_BG_COLOR_WHITE + "   H  G  F  D  C  B  A\n8 " + SET_TEXT_COLOR_WHITE);
-        int rowIncrement = 7;
-        for (int i = 1; i < board.size(); i++) {
-            if (isDigit(board.get(i).toCharArray()[0])) {
-                continue;
-            }
-            if (board.get(i).equals("\n")) {
-                flippedBoard.add(rowIncrement + " ");
-                rowIncrement--;
-            }
-            flippedBoard.add(board.get(i));
-        }
-        String reverseBoardString = constructEmptyBoardString(flippedBoard);
-        char[] stringArray = reverseBoardString.toCharArray();
+        String reverseString = constructEmptyBoardString(flipped, true);
+        char[] stringArray = reverseString.toCharArray();
 
         ChessPiece pieceAt;
         char updateChar;
@@ -128,29 +163,6 @@ public class ChessBoardGraphic {
 
         String reversed = String.valueOf(stringArray);
         return reversed;
-    }
-
-    public String setStringChessPieces() {
-
-        ChessPiece pieceAt;
-        char[] boardCharArray = constructEmptyBoardString(constructEmptyBoardSpaces()).toCharArray();
-        int[] boardPosIndexes = getBoardSpaceStringIndexes(boardCharArray);
-
-        char updateChar;
-        int indexAt = 0;
-
-        for (int x = 1; x <= boardData.getBoardLength(); x++) {
-            for (int y = 1; y <= boardData.getBoardLength(); y++) {
-                pieceAt = boardData.getPiece(new ChessPosition(x, y));
-                updateChar = getTextCharForPiece(pieceAt);
-
-                boardCharArray[boardPosIndexes[indexAt]] = updateChar;
-                indexAt++;
-            }
-        }
-
-        String s = String.valueOf(boardCharArray);
-        return s;
     }
 
     public char getTextCharForPiece(ChessPiece piece) {

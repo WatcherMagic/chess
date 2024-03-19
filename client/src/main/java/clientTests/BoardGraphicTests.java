@@ -81,13 +81,13 @@ public class BoardGraphicTests {
     void printEmptyBoardSpacesAndString() {
         ChessBoardGraphic graphic = new ChessBoardGraphic(board);
 
-        List<String> list = graphic.constructEmptyBoardSpaces();
+        List<String> list = graphic.constructEmptyBoardSpaces(false);
         String spaces = "";
         for (String s : list) {
             spaces = spaces.concat(s);
         }
         System.out.print(spaces);
-        String fullString = graphic.constructEmptyBoardString(list);
+        String fullString = graphic.constructEmptyBoardString(list, false);
         System.out.print(fullString);
     }
 
@@ -95,9 +95,7 @@ public class BoardGraphicTests {
     void printBoardBlackDown() {
         ChessBoardGraphic graphic = new ChessBoardGraphic(board);
 
-        graphic.printBoard();
-        String s = graphic.setStringChessPieces();
-        graphic.updateBoardString(s);
+        graphic.updateBoardString();
         graphic.printBoard();
     }
 
@@ -105,7 +103,14 @@ public class BoardGraphicTests {
     void printBoardWhiteDown() {
         ChessBoardGraphic graphic = new ChessBoardGraphic(board);
 
-        graphic.setStringChessPieces();
+        List<String> list = graphic.constructEmptyBoardSpaces(true);
+        String spaces = "";
+        for (String s : list) {
+            spaces = spaces.concat(s);
+        }
+        System.out.print(spaces);
+
+        graphic.updateBoardString();
         graphic.printBoard();
     }
 }

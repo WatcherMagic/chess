@@ -6,6 +6,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ui.ChessBoardGraphic;
 
+import java.util.List;
+
 import static chess.ChessGame.TeamColor.*;
 import static chess.ChessPiece.PieceType.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -76,17 +78,34 @@ public class BoardGraphicTests {
     }
 
     @Test
+    void printEmptyBoardSpacesAndString() {
+        ChessBoardGraphic graphic = new ChessBoardGraphic(board);
+
+        List<String> list = graphic.constructEmptyBoardSpaces();
+        String spaces = "";
+        for (String s : list) {
+            spaces = spaces.concat(s);
+        }
+        System.out.print(spaces);
+        String fullString = graphic.constructEmptyBoardString(list);
+        System.out.print(fullString);
+    }
+
+    @Test
     void printBoardBlackDown() {
-        board.resetBoard();
         ChessBoardGraphic graphic = new ChessBoardGraphic(board);
 
         graphic.printBoard();
-        graphic.updateBoardString();
+        String s = graphic.setStringChessPieces();
+        graphic.updateBoardString(s);
         graphic.printBoard();
     }
 
     @Test
     void printBoardWhiteDown() {
+        ChessBoardGraphic graphic = new ChessBoardGraphic(board);
 
+        graphic.setStringChessPieces();
+        graphic.printBoard();
     }
 }

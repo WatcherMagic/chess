@@ -6,8 +6,10 @@ import chess.ChessPiece;
 import chess.ChessPosition;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
+import static java.lang.Character.isDigit;
 import static ui.EscapeSequences.*;
 
 import static java.lang.Character.toUpperCase;
@@ -16,16 +18,13 @@ public class ChessBoardGraphic {
 
     String chessBoard;
     ChessBoard boardData;
-    int[] boardPosIndexes;
 
     public ChessBoardGraphic(ChessBoard boardData) {
         this.boardData = boardData;
-        this.chessBoard = constructEmptyBoardString();
-        this.boardPosIndexes = getBoardSpaceStringIndexes();
+        this.chessBoard = constructEmptyBoardString(constructEmptyBoardSpaces());
     }
 
-    public int[] getBoardSpaceStringIndexes() {
-        char[] boardStringArray = chessBoard.toCharArray();
+    public int[] getBoardSpaceStringIndexes(char[] boardStringArray) {
 
         int[] boardPositionsFromA1toH8 = new int[64];
         int arrayIndex = 0;
@@ -40,70 +39,105 @@ public class ChessBoardGraphic {
         return boardPositionsFromA1toH8;
     }
 
-    private List<String> constructEmptyBoardList() {
+    public List<String> constructEmptyBoardSpaces() {
         List<String> newBoard = new ArrayList<>();
 
-        newBoard.add(SET_BG_COLOR_WHITE);
-        newBoard.add("   A ");
-        newBoard.add(" B ");
-        newBoard.add(" C ");
-        newBoard.add(" D ");
-        newBoard.add(" E ");
-        newBoard.add(" F ");
-        newBoard.add(" G ");
-        newBoard.add(" H ");
-
-
-        String lightDark = SET_BG_COLOR_LIGHT_GREY + " # ";
-        String darkLight = SET_BG_COLOR_DARK_GREY + " # ";
+        String lightGray = SET_BG_COLOR_LIGHT_GREY + " # ";
+        String darkGray = SET_BG_COLOR_DARK_GREY + " # ";
 
         for (int i = 1; i <= 8; i++) {
-            newBoard.add(SET_BG_COLOR_WHITE);
-            newBoard.add(SET_TEXT_COLOR_BLACK);
-            newBoard.add("\n");
-            newBoard.add(i + " ");
-            newBoard.add(SET_TEXT_COLOR_WHITE);
-
             for (int x = 0; x < 4; x++) {
                 if (i % 2 == 0) {
-                    newBoard.add(darkLight);
-                    newBoard.add(lightDark);
+                    newBoard.add(darkGray);
+                    newBoard.add(lightGray);
                 }
                 else {
-                    newBoard.add(lightDark);
-                    newBoard.add(darkLight);
+                    newBoard.add(lightGray);
+                    newBoard.add(darkGray);
                 }
             }
+            newBoard.add(SET_BG_COLOR_WHITE);
+            newBoard.add("\n");
         }
         newBoard.add(SET_BG_COLOR_WHITE);
-        newBoard.add(SET_TEXT_COLOR_BLACK);
         newBoard.add("\n");
 
         return newBoard;
     }
 
-    private String constructEmptyBoardString() {
-        List<String> list = constructEmptyBoardList();
+    public String constructEmptyBoardString(List<String> list) {
         String board = "";
+        board = board.concat(SET_BG_COLOR_WHITE + "   A  B  C  D  E  F  G  H\n1 " + SET_TEXT_COLOR_WHITE);
 
+        int colIncrement = 0;
+        int rowIncrement = 2;
         for(int i = 0; i < list.size(); i++) {
             board = board.concat(list.get(i));
+            if (list.get(i).equals("\n") && rowIncrement < 9) {
+                board = board.concat(SET_TEXT_COLOR_BLACK
+                        + rowIncrement + " " + SET_TEXT_COLOR_WHITE);
+                rowIncrement++;
+            }
         }
 
         return board;
     }
 
-    public void printBoard() {
-        System.out.print(chessBoard);
+    public void updateBoardString(String s) {
+        chessBoard = s;
     }
 
-    public String updateBoardString() {
-        //untested -- need to finish display method first
+    public void printBoard() {
+        System.out.print(chessBoard);
+        System.out.print(reverseBoardString());
+    }
+
+    public String reverseBoardString() {
+        List<String> board = constructEmptyBoardSpaces();
+        Collections.reverse(board);
+
+        List<String> flippedBoard = new ArrayList<>();
+        flippedBoard.add(SET_BG_COLOR_WHITE + "   H  G  F  D  C  B  A\n8 " + SET_TEXT_COLOR_WHITE);
+        int rowIncrement = 7;
+        for (int i = 1; i < board.size(); i++) {
+            if (isDigit(board.get(i).toCharArray()[0])) {
+                continue;
+            }
+            if (board.get(i).equals("\n")) {
+                flippedBoard.add(rowIncrement + " ");
+                rowIncrement--;
+            }
+            flippedBoard.add(board.get(i));
+        }
+        String reverseBoardString = constructEmptyBoardString(flippedBoard);
+        char[] stringArray = reverseBoardString.toCharArray();
 
         ChessPiece pieceAt;
-        int indexAt = 0;
-        char[] boardCharArray = chessBoard.toCharArray();
         char updateChar;
+        int[] indexes = getBoardSpaceStringIndexes(stringArray);
+        int index = 0;
+        for (int x = boardData.getBoardLength(); x >= 1; x--) {
+            for (int y = boardData.getBoardLength(); y >= 1; y--) {
+                pieceAt = boardData.getPiece(new ChessPosition(x, y));
+                updateChar = getTextCharForPiece(pieceAt);
+
+                stringArray[indexes[index]] = updateChar;
+                index++;
+            }
+        }
+
+        String reversed = String.valueOf(stringArray);
+        return reversed;
+    }
+
+    public String setStringChessPieces() {
+
+        ChessPiece pieceAt;
+        char[] boardCharArray = constructEmptyBoardString(constructEmptyBoardSpaces()).toCharArray();
+        int[] boardPosIndexes = getBoardSpaceStringIndexes(boardCharArray);
+
+        char updateChar;
+        int indexAt = 0;
 
         for (int x = 1; x <= boardData.getBoardLength(); x++) {
             for (int y = 1; y <= boardData.getBoardLength(); y++) {
@@ -115,8 +149,8 @@ public class ChessBoardGraphic {
             }
         }
 
-        chessBoard = String.valueOf(boardCharArray);
-        return chessBoard;
+        String s = String.valueOf(boardCharArray);
+        return s;
     }
 
     public char getTextCharForPiece(ChessPiece piece) {

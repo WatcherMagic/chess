@@ -1,5 +1,11 @@
 package ui;
 
+import fascade.ServerFascade;
+import model.UserData;
+import service.LoginAndRegisterResponse;
+
+import java.util.Scanner;
+
 public class Menu {
 
     private static String preLoginUI = """
@@ -24,6 +30,23 @@ public class Menu {
 
     public static void printPreLoginUI() {
         System.out.print(preLoginUI);
+    }
+
+    public void handleRegisterUI(String serverURL) throws Exception {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Enter your username\n");
+        String username = scanner.nextLine();
+
+        System.out.print("Now enter an email\n");
+        String email = scanner.nextLine();
+
+        System.out.print("Create your password\n");
+        String password = scanner.nextLine();
+
+        ServerFascade serverFascade = new ServerFascade(serverURL);
+
+        serverFascade.register(new UserData(username, password, email));
     }
 
 }

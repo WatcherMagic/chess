@@ -74,7 +74,7 @@ public class BoardGraphicTests {
         assertEquals('X', c, "something bad happened!");
 
         c = graphic.getTextCharForPiece(null);
-        assertEquals('\u2003', c);
+        assertEquals(' ', c);
     }
 
     @Test

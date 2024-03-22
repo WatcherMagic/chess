@@ -206,4 +206,71 @@ public class ChessBoardGraphic {
 
         return pieceChar;
     }
+
+    public char getChessCharForPiece(ChessPiece piece) {
+        if (piece == null) {
+            return ' ';
+        }
+
+        char pieceChar = 'X';
+        ChessPiece.PieceType type = piece.getPieceType();
+        ChessGame.TeamColor color = piece.getTeamColor();
+
+        if (type == null || color == null) {
+            return pieceChar;
+        }
+
+        switch (type) {
+            case KING:
+                if (color == ChessGame.TeamColor.WHITE) {
+                    pieceChar = WHITE_KING.charAt(0);
+                }
+                else {
+                    pieceChar = BLACK_KING.charAt(0);
+                }
+                break;
+            case QUEEN:
+                if (color == ChessGame.TeamColor.WHITE) {
+                    pieceChar = WHITE_QUEEN.charAt(0);
+                }
+                else {
+                    pieceChar = BLACK_QUEEN.charAt(0);
+                }
+                break;
+            case BISHOP:
+                if (color == ChessGame.TeamColor.WHITE) {
+                    pieceChar = WHITE_BISHOP.charAt(0);
+                }
+                else {
+                    pieceChar = BLACK_BISHOP.charAt(0);
+                }
+                break;
+            case ROOK:
+                if (color == ChessGame.TeamColor.WHITE) {
+                    pieceChar = WHITE_ROOK.charAt(0);
+                }
+                else {
+                    pieceChar = BLACK_ROOK.charAt(0);
+                }
+                break;
+            case KNIGHT:
+                if (color == ChessGame.TeamColor.WHITE) {
+                    pieceChar = WHITE_KNIGHT.charAt(0);
+                }
+                else {
+                    pieceChar = BLACK_KNIGHT.charAt(0);
+                }
+                break;
+            case PAWN:
+                if (color == ChessGame.TeamColor.WHITE) {
+                    pieceChar = WHITE_PAWN.charAt(0);
+                }
+                else {
+                    pieceChar = BLACK_PAWN.charAt(0);
+                }
+                break;
+        }
+
+        return pieceChar;
+    }
 }

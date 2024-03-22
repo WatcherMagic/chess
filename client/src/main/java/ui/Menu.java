@@ -2,11 +2,19 @@ package ui;
 
 import fascade.ServerFascade;
 import model.UserData;
-import service.LoginAndRegisterResponse;
 
 import java.util.Scanner;
 
 public class Menu {
+
+    static Scanner scanner = new Scanner(System.in);
+
+    private static String preLoginHelp = """
+            Type "1" in the console and press "Enter" to create a new user.
+            Type "2" to log in as an existing user.
+            Type "3" to close the program.
+            To exit help, press "Enter" or enter any character.
+            """;
 
     private static String preLoginUI = """
             Enter a number to select:
@@ -32,16 +40,15 @@ public class Menu {
         System.out.print(preLoginUI);
     }
 
-    public void handleRegisterUI(String serverURL) throws Exception {
-        Scanner scanner = new Scanner(System.in);
+    public static void handleRegisterUI(String serverURL) throws Exception {
 
-        System.out.print("Enter your username\n");
+        System.out.print("Choose your username\n");
         String username = scanner.nextLine();
 
-        System.out.print("Now enter an email\n");
+        System.out.print("Enter an email\n");
         String email = scanner.nextLine();
 
-        System.out.print("Create your password\n");
+        System.out.print("And create your password\n");
         String password = scanner.nextLine();
 
         ServerFascade serverFascade = new ServerFascade(serverURL);
@@ -49,4 +56,21 @@ public class Menu {
         serverFascade.register(new UserData(username, password, email));
     }
 
+    public static void handleLoginUI(String serverURL) throws Exception {
+
+        System.out.print("Enter your username\n");
+        String username = scanner.nextLine();
+
+        System.out.print("Enter your password\n");
+        String password = scanner.nextLine();
+
+        ServerFascade serverFascade = new ServerFascade(serverURL);
+
+        serverFascade.login(new UserData(username, password, null));
+    }
+
+    public static void handlePreLoginHelp() {
+        System.out.print(preLoginHelp);
+        scanner.nextLine();
+    }
 }

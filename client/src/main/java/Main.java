@@ -8,20 +8,20 @@ public class Main {
 
         Scanner scanner = new Scanner(System.in);
         String url = "http://localhost:8080";
+        Menu menu = new Menu(url);
 
         int input = 0;
         while (input != 3) {
-            System.out.print("\033[H\033[2J");
             Menu.printPreLoginUI();
             input = scanner.nextInt();
             switch(input) {
                 case 1: //Register
-                    Menu.handleRegisterUI(url);
+                    menu.handleRegisterUI();
                     break;
-                case 2:
-                    Menu.handleLoginUI(url);
+                case 2: //Login
+                    menu.handleLoginUI();
                     break;
-                case 4:
+                case 4: //Help
                     Menu.handlePreLoginHelp();
                     break;
             }

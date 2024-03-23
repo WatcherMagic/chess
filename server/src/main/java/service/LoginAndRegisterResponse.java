@@ -10,4 +10,11 @@ public class LoginAndRegisterResponse extends Response {
         this.username = username;
     }
 
+    public String getAuthToken() {
+        return authToken;
+    }
+
+    public String getUsername() {
+        return username;
+    }
 }

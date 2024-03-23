@@ -5,11 +5,5 @@ import ui.Menu;
 
 public class MenuTests {
 
-    @Test
-    void testRegisterUI() {
-        Menu menu = new Menu();
-
-
-    }
 
 }

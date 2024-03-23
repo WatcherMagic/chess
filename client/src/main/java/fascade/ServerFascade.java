@@ -61,8 +61,10 @@ public class ServerFascade {
         return makeRequest("PUT", "/game", request, null, GameResponse.class);
     }
 
-    public GameListResponse listGames(GameRequest request) throws Exception {
-        return makeRequest("GET", "/game", request, null, GameListResponse.class);
+    public GameListResponse listGames(AuthData auth) throws Exception {
+        Map<String, String> headers = new HashMap<>();
+        headers.put("authorization", auth.token());
+        return makeRequest("GET", "/game", null, headers, GameListResponse.class);
     }
 
     private <T> T makeRequest(String method, String path, Object request, Map<String, String> headers, Class<T> responseClass) throws Exception {
@@ -77,7 +79,9 @@ public class ServerFascade {
             }
 
             http.setDoOutput(true);
-            writeBody(request, http);
+            if (request != null) {
+                writeBody(request, http);
+            }
 
             http.connect();
 

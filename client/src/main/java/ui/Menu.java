@@ -3,10 +3,14 @@ package ui;
 import com.google.gson.Gson;
 import fascade.ServerFascade;
 import model.AuthData;
+import model.GameData;
 import model.UserData;
+import service.GameListResponse;
 import service.GameRequest;
 import service.LoginAndRegisterResponse;
+import static ui.EscapeSequences.*;
 
+import java.util.List;
 import java.util.Scanner;
 
 public class Menu {
@@ -111,6 +115,7 @@ public class Menu {
                     handleCreateGameUI(auth);
                     break;
                 case 2:
+                    handleListGamesUI(auth);
                     break;
                 case 3:
                     break;
@@ -132,6 +137,23 @@ public class Menu {
         GameRequest request = new GameRequest(name, null, null);
         fascade.createGame(request, auth);
         System.out.print("Successfully created " + name + "!\n");
+        scanner.nextLine();
+    }
+
+    private void handleListGamesUI(AuthData auth) throws Exception {
+        GameListResponse listRes = fascade.listGames(auth);
+        List<GameData> gameList = listRes.getGameList();
+
+        Boolean rowSpace = false;
+        System.out.print("   ID   NAME\n");
+        for (int i = 0; i < gameList.size(); i++) {
+            if (rowSpace == false) {
+                System.out.print(SET_BG_COLOR_LIGHT_GREY);
+            }
+            System.out.print((i + 1) + " | " + gameList.get(i).gameID() + " | " + gameList.get(i).gameName() + SET_BG_COLOR_WHITE + "\n");
+            rowSpace = !rowSpace;
+        }
+        System.out.print("\nPress \"Enter\" to return to the menu.\n");
         scanner.nextLine();
     }
 }

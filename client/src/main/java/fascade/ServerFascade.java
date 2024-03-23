@@ -17,6 +17,8 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ServerFascade {
 
@@ -36,37 +38,47 @@ public class ServerFascade {
     }
 
     public LoginAndRegisterResponse register(UserData userData) throws Exception {
-        return makeRequest("POST", "/user", userData, LoginAndRegisterResponse.class);
+        return makeRequest("POST", "/user", userData, null, LoginAndRegisterResponse.class);
     }
 
     public LoginAndRegisterResponse login(UserData userData) throws Exception {
-        return makeRequest("POST", "/session", userData, LoginAndRegisterResponse.class);
+        return makeRequest("POST", "/session", userData, null, LoginAndRegisterResponse.class);
     }
 
     public LoginAndRegisterResponse logout(AuthData auth) throws Exception {
-        return makeRequest("DELETE", "/session", auth, LoginAndRegisterResponse.class);
+        Map<String, String> headers = new HashMap<>();
+        headers.put("authorization", auth.token());
+        return makeRequest("DELETE", "/session", auth, headers, LoginAndRegisterResponse.class);
     }
 
-    public GameResponse createGame(GameRequest request) throws Exception {
-        return makeRequest("POST", "/game", request, GameResponse.class);
+    public GameResponse createGame(GameRequest request, AuthData auth) throws Exception {
+        Map<String, String> headers = new HashMap<>();
+        headers.put("authorization", auth.token());
+        return makeRequest("POST", "/game", request, headers, GameResponse.class);
     }
 
     public GameResponse joinGame(GameRequest request) throws Exception {
-        return makeRequest("PUT", "/game", request, GameResponse.class);
+        return makeRequest("PUT", "/game", request, null, GameResponse.class);
     }
 
     public GameListResponse listGames(GameRequest request) throws Exception {
-        return makeRequest("GET", "/game", request, GameListResponse.class);
+        return makeRequest("GET", "/game", request, null, GameListResponse.class);
     }
 
-    private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) throws Exception {
+    private <T> T makeRequest(String method, String path, Object request, Map<String, String> headers, Class<T> responseClass) throws Exception {
         try {
             URL url = (new URI(serverUrl + path)).toURL();
             HttpURLConnection http = (HttpURLConnection) url.openConnection();
             http.setRequestMethod(method);
+            if (headers != null) {
+                for (Map.Entry<String, String> entry : headers.entrySet()) {
+                    http.addRequestProperty(entry.getKey(), entry.getValue());
+                }
+            }
 
             http.setDoOutput(true);
             writeBody(request, http);
+
             http.connect();
 
             try (InputStream respBody = http.getInputStream()) {

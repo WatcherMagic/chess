@@ -108,7 +108,7 @@ public class Menu {
             input = Integer.parseInt(scanner.nextLine());
             switch(input) {
                 case 1: //Create game
-                    handleCreateGameUI();
+                    handleCreateGameUI(auth);
                     break;
                 case 2:
                     break;
@@ -125,12 +125,12 @@ public class Menu {
         }
     }
 
-    private void handleCreateGameUI() throws Exception {
+    private void handleCreateGameUI(AuthData auth) throws Exception {
         System.out.print("Enter a name for your game:\n");
         String name = scanner.nextLine();
 
         GameRequest request = new GameRequest(name, null, null);
-        fascade.createGame(request);
+        fascade.createGame(request, auth);
         System.out.print("Successfully created " + name + "!\n");
         scanner.nextLine();
     }

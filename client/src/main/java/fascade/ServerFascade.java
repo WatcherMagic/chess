@@ -57,8 +57,10 @@ public class ServerFascade {
         return makeRequest("POST", "/game", request, headers, GameResponse.class);
     }
 
-    public GameResponse joinGame(GameRequest request) throws Exception {
-        return makeRequest("PUT", "/game", request, null, GameResponse.class);
+    public GameResponse joinGame(GameRequest request, AuthData auth) throws Exception {
+        Map<String, String> headers = new HashMap<>();
+        headers.put("authorization", auth.token());
+        return makeRequest("PUT", "/game", request, headers, GameResponse.class);
     }
 
     public GameListResponse listGames(AuthData auth) throws Exception {

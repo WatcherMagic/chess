@@ -118,6 +118,7 @@ public class Menu {
                     handleListGamesUI(auth);
                     break;
                 case 3:
+                    handleJoinGameUI(auth);
                     break;
                 case 4:
                     break;
@@ -154,6 +155,18 @@ public class Menu {
             rowSpace = !rowSpace;
         }
         System.out.print("\nPress \"Enter\" to return to the menu.\n");
+        scanner.nextLine();
+    }
+
+    private void handleJoinGameUI(AuthData auth) throws Exception {
+        System.out.print("Enter the Game ID of the game you'd like to join:\n");
+        int id = Integer.parseInt(scanner.nextLine());
+
+        System.out.print("Now type the word \"White\" or \"Black\" to choose your team.\n");
+        String team = scanner.nextLine();
+
+        fascade.joinGame(new GameRequest(null, id, team), auth);
+        System.out.print("You've successfully joined!");
         scanner.nextLine();
     }
 }

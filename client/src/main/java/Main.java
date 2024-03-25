@@ -22,7 +22,7 @@ public class Main {
                     menu.handleLoginUI();
                     break;
                 case 4: //Help
-                    Menu.handlePreLoginHelp();
+                    Menu.handleHelp(Menu.getPreLoginHelp());
                     break;
             }
         }

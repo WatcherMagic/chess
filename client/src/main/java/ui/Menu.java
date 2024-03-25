@@ -1,12 +1,12 @@
 package ui;
 
-import com.google.gson.Gson;
 import fascade.ServerFascade;
 import model.AuthData;
 import model.GameData;
 import model.UserData;
 import service.GameListResponse;
 import service.GameRequest;
+import service.GameResponse;
 import service.LoginAndRegisterResponse;
 import static ui.EscapeSequences.*;
 
@@ -26,15 +26,16 @@ public class Menu {
             Type "1" in the console and press "Enter" to create a new user.
             Type "2" to log in as an existing user.
             Type "3" to close the program.
-            To exit help, press "Enter" or enter any character.
+            
+            Press "Enter" or enter any character to continue.
             """;
 
     private static String postLoginHelp = """
             Type "1" in the console and press "Enter" to create a new game,
             "2" to list already existing games,
-            "3" to play a game,
-            "4" to watch a game,
-            and "5" to exit to the main menu.
+            "3" to join a game as player or observer,
+            and "4" to exit to the menu.
+            
             Press "Enter" or enter any character to continue.
             """;
 
@@ -53,17 +54,20 @@ public class Menu {
             1. Create Game
             2. List Games
             3. Join Game
-            4. Observe Game
-            5. Logout
-            6. Help
+            4. Logout
+            5. Help
             """;
 
     public static void printPreLoginUI() {
         System.out.print(preLoginUI);
     }
 
-    public static void handlePreLoginHelp() {
-        System.out.print(preLoginHelp);
+    public static String getPreLoginHelp() {
+        return preLoginHelp;
+    }
+
+    public static void handleHelp(String help) {
+        System.out.print(help);
         scanner.nextLine();
     }
 
@@ -107,7 +111,7 @@ public class Menu {
 
     private void handlePostLoginUI(AuthData auth) throws Exception {
         int input = 0;
-        while (input != 5) {
+        while (input != 4) {
             System.out.print(postLoginUI);
             input = Integer.parseInt(scanner.nextLine());
             switch(input) {
@@ -121,11 +125,10 @@ public class Menu {
                     handleJoinGameUI(auth);
                     break;
                 case 4:
-                    break;
-                case 5:
                     fascade.logout(auth);
                     break;
-                case 6:
+                case 5:
+                    handleHelp(postLoginHelp);
                     break;
             }
         }
@@ -135,26 +138,36 @@ public class Menu {
         System.out.print("Enter a name for your game:\n");
         String name = scanner.nextLine();
 
-        GameRequest request = new GameRequest(name, null, null);
-        fascade.createGame(request, auth);
-        System.out.print("Successfully created " + name + "!\n");
+        GameRequest req = new GameRequest(name, null, null);
+        GameResponse res = fascade.createGame(req, auth);
+        if (res.getMessage() == null) {
+            System.out.print("Successfully created " + name + "!\n");
+        }
+        else {
+            System.out.print(res.getMessage() + "\n");
+        }
         scanner.nextLine();
     }
 
     private void handleListGamesUI(AuthData auth) throws Exception {
-        GameListResponse listRes = fascade.listGames(auth);
-        List<GameData> gameList = listRes.getGameList();
+        GameListResponse res = fascade.listGames(auth);
+        if (res.getMessage() == null) {
+            List<GameData> gameList = res.getGameList();
 
-        Boolean rowSpace = false;
-        System.out.print("   ID   NAME\n");
-        for (int i = 0; i < gameList.size(); i++) {
-            if (rowSpace == false) {
-                System.out.print(SET_BG_COLOR_LIGHT_GREY);
+            Boolean colorAlternate = false;
+            System.out.print("   ID   NAME\n");
+            for (int i = 0; i < gameList.size(); i++) {
+                if (colorAlternate == false) {
+                    System.out.print(SET_BG_COLOR_LIGHT_GREY);
+                }
+                System.out.print((i + 1) + " | " + gameList.get(i).gameID() + " | " + gameList.get(i).gameName() + SET_BG_COLOR_WHITE + "\n");
+                colorAlternate = !colorAlternate;
             }
-            System.out.print((i + 1) + " | " + gameList.get(i).gameID() + " | " + gameList.get(i).gameName() + SET_BG_COLOR_WHITE + "\n");
-            rowSpace = !rowSpace;
+            System.out.print("\nPress \"Enter\" to return to the menu.\n");
         }
-        System.out.print("\nPress \"Enter\" to return to the menu.\n");
+        else {
+            System.out.print(res.getMessage() + "\n");
+        }
         scanner.nextLine();
     }
 
@@ -162,11 +175,16 @@ public class Menu {
         System.out.print("Enter the Game ID of the game you'd like to join:\n");
         int id = Integer.parseInt(scanner.nextLine());
 
-        System.out.print("Now type the word \"White\" or \"Black\" to choose your team.\n");
+        System.out.print("Now type the word \"White\" or \"Black\" to choose your team, or leave blank to join as an observer.\n");
         String team = scanner.nextLine();
 
-        fascade.joinGame(new GameRequest(null, id, team), auth);
-        System.out.print("You've successfully joined!");
+        GameResponse res = fascade.joinGame(new GameRequest(null, id, team), auth);
+        if (res.getMessage() == null) {
+            System.out.print("You've successfully joined!\n");
+        }
+        else {
+            System.out.print(res.getMessage() + "\n");
+        }
         scanner.nextLine();
     }
 }

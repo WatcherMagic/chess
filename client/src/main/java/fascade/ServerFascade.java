@@ -70,29 +70,26 @@ public class ServerFascade {
     }
 
     private <T> T makeRequest(String method, String path, Object request, Map<String, String> headers, Class<T> responseClass) throws Exception {
-        try {
-            URL url = (new URI(serverUrl + path)).toURL();
-            HttpURLConnection http = (HttpURLConnection) url.openConnection();
-            http.setRequestMethod(method);
-            if (headers != null) {
-                for (Map.Entry<String, String> entry : headers.entrySet()) {
-                    http.addRequestProperty(entry.getKey(), entry.getValue());
-                }
-            }
 
-            http.setDoOutput(true);
-            if (request != null) {
-                writeBody(request, http);
+        URL url = (new URI(serverUrl + path)).toURL();
+        HttpURLConnection http = (HttpURLConnection) url.openConnection();
+        http.setRequestMethod(method);
+        if (headers != null) {
+            for (Map.Entry<String, String> entry : headers.entrySet()) {
+                http.addRequestProperty(entry.getKey(), entry.getValue());
             }
+        }
 
-            http.connect();
+        http.setDoOutput(true);
+        if (request != null) {
+            writeBody(request, http);
+        }
 
-            try (InputStream respBody = http.getInputStream()) {
-                InputStreamReader inputStreamReader = new InputStreamReader(respBody);
-                return new Gson().fromJson(inputStreamReader, responseClass);
-            }
-        } catch (Exception ex) {
-            throw new Exception();
+        http.connect();
+
+        try (InputStream respBody = http.getInputStream()) {
+            InputStreamReader inputStreamReader = new InputStreamReader(respBody);
+            return new Gson().fromJson(inputStreamReader, responseClass);
         }
     }
 

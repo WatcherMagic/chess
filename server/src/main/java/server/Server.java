@@ -126,6 +126,12 @@ public class Server {
         return res.body();
     }
 
+    public void clearDatabase() throws DataAccessException {
+        gameDAO.clearData();
+        authDAO.clearData();
+        userDAO.clearData();
+    }
+
     private UserData serlializeUser(Gson serializer, spark.Request req) {
         return serializer.fromJson(req.body(), UserData.class);
     }

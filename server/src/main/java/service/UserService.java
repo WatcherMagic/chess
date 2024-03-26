@@ -28,7 +28,8 @@ public class UserService extends Service {
             return new LoginAndRegisterResponse("Error: bad request", null, null);
         }
         else {
-            if (userDAO.getUser(newUser.username()).username() == null) {
+            String username = userDAO.getUser(newUser.username()).username();
+            if (username == null) {
                 String hashedPassword = userDAO.hashPassword(newUser.password());
                 userDAO.addUser(new UserData(newUser.username(), hashedPassword, newUser.email()));
 

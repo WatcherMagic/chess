@@ -36,7 +36,11 @@ public class SQLUserDAO implements UserDAO {
     @Override
     public UserData getUser(String username) throws DataAccessException {
         try (var conn = DatabaseManager.getConnection()) {
-            try (var preparedStatement = conn.prepareStatement("SELECT * FROM user_data WHERE username=?")) {
+
+            //issue with register fail test happening here;
+            //  rs.next() is skipped despite a matching username being in database?
+
+            try (var preparedStatement = conn.prepareStatement("SELECT * FROM user_data WHERE username= ?")) {
                 String name = null;
                 String password = null;
                 String email = null;

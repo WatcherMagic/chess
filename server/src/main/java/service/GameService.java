@@ -55,7 +55,13 @@ public class GameService extends Service {
 
     public GameResponse joinGame(AuthData auth, Integer gameID, String color) throws DataAccessException {
         resetErrorCode();
-        GameData g = gameDAO.getGameData(gameID);
+        GameData g;
+        if (gameID == null) {
+            g = null;
+        }
+        else {
+            g = gameDAO.getGameData(gameID);
+        }
         if (g == null) {
             errorCode = 400;
             return new GameResponse("Error: bad request", null, null);

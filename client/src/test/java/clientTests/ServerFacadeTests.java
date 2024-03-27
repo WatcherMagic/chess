@@ -50,14 +50,16 @@ public class ServerFacadeTests {
 
     @Test
     void registerFailAlreadyTaken() throws Exception {
-        Exception ex = Assertions.assertThrows(Exception.class, () -> fascade.register(new UserData(existsUsername, existsPassword, existsEmail)));
-        Assertions.assertTrue(ex.getMessage().contains("403"));
+        LoginAndRegisterResponse res = fascade.register(new UserData(existsUsername, existsPassword, existsEmail));
+        Assertions.assertNotNull(res.getMessage());
+        assertEquals("Error: already taken", res.getMessage());
     }
 
     @Test
-    void registerFailBadRequest() {
-        Exception ex = Assertions.assertThrows(Exception.class, () -> fascade.register(new UserData(existsUsername, existsPassword, null)));
-        Assertions.assertTrue(ex.getMessage().contains("400"));
+    void registerFailBadRequest() throws Exception {
+        LoginAndRegisterResponse res = fascade.register(new UserData(existsUsername, existsPassword, null));
+        Assertions.assertNotNull(res.getMessage());
+        assertEquals("Error: bad request", res.getMessage());
     }
 
     @Test
@@ -67,9 +69,10 @@ public class ServerFacadeTests {
     }
 
     @Test
-    void loginFailUnauthorized() {
-        Exception ex = Assertions.assertThrows(Exception.class, () -> fascade.login(new UserData(existsUsername, "wrongpassword", null)));
-        Assertions.assertTrue(ex.getMessage().contains("401"));
+    void loginFailUnauthorized() throws Exception {
+        LoginAndRegisterResponse res = fascade.login(new UserData(existsUsername, "wrongpassword", null));
+        Assertions.assertNotNull(res.getMessage());
+        assertEquals("Error: unauthorized", res.getMessage());
     }
 
     @Test
@@ -79,9 +82,10 @@ public class ServerFacadeTests {
     }
 
     @Test
-    void logoutFailUnauthorized() {
-        Exception ex = Assertions.assertThrows(Exception.class, () -> fascade.logout(new AuthData(existsUsername, "bad token")));
-        Assertions.assertTrue(ex.getMessage().contains("401"));
+    void logoutFailUnauthorized() throws Exception {
+        LoginAndRegisterResponse res = fascade.logout(new AuthData(existsUsername, "bad token"));
+        Assertions.assertNotNull(res.getMessage());
+        assertEquals("Error: unauthorized", res.getMessage());
     }
 
     @Test
@@ -92,16 +96,18 @@ public class ServerFacadeTests {
     }
 
     @Test
-    void createGameFailUnauthorized() {
-        Exception ex = Assertions.assertThrows(Exception.class, () -> fascade.createGame(new GameRequest("NewGame", null, null),
-                new AuthData(existsUsername, "bad token")));
-        Assertions.assertTrue(ex.getMessage().contains("401"));
+    void createGameFailUnauthorized() throws Exception {
+        GameResponse res = fascade.createGame(new GameRequest("NewGame", null, null),
+                new AuthData(existsUsername, "bad token"));
+        Assertions.assertNotNull(res.getMessage());
+        assertEquals("Error: unauthorized", res.getMessage());
     }
 
     @Test
-    void createGameBadRequest() {
-        Exception ex = Assertions.assertThrows(Exception.class, () -> fascade.createGame(new GameRequest(null, null, null), existsAuth));
-        Assertions.assertTrue(ex.getMessage().contains("400"));
+    void createGameBadRequest() throws Exception {
+        GameResponse res = fascade.createGame(new GameRequest(null, null, null), existsAuth);
+        Assertions.assertNotNull(res.getMessage());
+        assertEquals("Error: bad request", res.getMessage());
     }
 
     @Test
@@ -112,40 +118,45 @@ public class ServerFacadeTests {
 
     @Test
     void joinGameFailUnauthorized() throws Exception {
-        Exception ex = Assertions.assertThrows(Exception.class, () -> fascade.joinGame(new GameRequest(null, 1, null),
-                        new AuthData(existsUsername, "bad token")));
-        Assertions.assertTrue(ex.getMessage().contains("401"));
+        GameResponse res = fascade.joinGame(new GameRequest(null, 1, null),
+                        new AuthData(existsUsername, "bad token"));
+        Assertions.assertNotNull(res.getMessage());
+        assertEquals("Error: unauthorized", res.getMessage());
     }
 
     @Test
-    void joinGameFailBadRequestNoID() {
-        Exception ex = Assertions.assertThrows(Exception.class, () -> fascade.joinGame(new GameRequest(null, null, null), existsAuth));
-        Assertions.assertTrue(ex.getMessage().contains("400"));
+    void joinGameFailBadRequestNoID() throws Exception {
+        GameResponse res = fascade.joinGame(new GameRequest(null, null, null), existsAuth);
+        Assertions.assertNotNull(res.getMessage());
+        assertEquals("Error: bad request", res.getMessage());
     }
 
     @Test
-    void joinGameFailIDNotExists() {
-        Exception ex = Assertions.assertThrows(Exception.class, () -> fascade.joinGame(new GameRequest(null, 100, null), existsAuth));
-        Assertions.assertTrue(ex.getMessage().contains("400"));
+    void joinGameFailBadRequestIDNotExists() throws Exception {
+        GameResponse res = fascade.joinGame(new GameRequest(null, 100, null), existsAuth);
+        Assertions.assertNotNull(res.getMessage());
+        assertEquals("Error: bad request", res.getMessage());
     }
 
     @Test
     void joinGameFailSpotTaken() throws Exception {
         fascade.joinGame(new GameRequest(null, 1, "white"), existsAuth);
-        Exception ex = Assertions.assertThrows(Exception.class, () -> fascade.joinGame(
-                new GameRequest(null, 1, "white"), existsAuth));
-        Assertions.assertTrue(ex.getMessage().contains("403"));
+        GameResponse res = fascade.joinGame(
+                new GameRequest(null, 1, "white"), existsAuth);
+        Assertions.assertNotNull(res.getMessage());
+        assertEquals("Error: already taken", res.getMessage());
     }
 
     @Test
     void listGamesSuccess() throws Exception {
         GameListResponse res = fascade.listGames(existsAuth);
-        Assertions.assertTrue(!res.getGameList().isEmpty());
+        assertFalse(res.getGameList().isEmpty());
     }
 
     @Test
-    void ListGamesFailUnauthorized() {
-        Exception ex = Assertions.assertThrows(Exception.class, () -> fascade.listGames(new AuthData(existsUsername, "bad token")));
-        Assertions.assertTrue(ex.getMessage().contains("401"));
+    void ListGamesFailUnauthorized() throws Exception {
+        GameListResponse res = fascade.listGames(new AuthData(existsUsername, "bad token"));
+        Assertions.assertNotNull(res.getMessage());
+        assertEquals("Error: unauthorized", res.getMessage());
     }
 }

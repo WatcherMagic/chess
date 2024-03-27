@@ -1,4 +1,4 @@
-package test;
+package clientTests;
 
 import fascade.ServerFascade;
 import model.AuthData;

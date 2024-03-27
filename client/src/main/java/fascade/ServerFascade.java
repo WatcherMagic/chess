@@ -3,7 +3,6 @@ package fascade;
 import com.google.gson.Gson;
 import model.AuthData;
 import model.UserData;
-import org.eclipse.jetty.client.HttpResponseException;
 import service.GameListResponse;
 import service.GameRequest;
 import service.GameResponse;
@@ -87,7 +86,12 @@ public class ServerFascade {
 
         http.connect();
 
+
         try (InputStream respBody = http.getInputStream()) {
+            InputStreamReader inputStreamReader = new InputStreamReader(respBody);
+            return new Gson().fromJson(inputStreamReader, responseClass);
+        } catch (java.io.IOException ex) {
+            InputStream respBody = http.getErrorStream();
             InputStreamReader inputStreamReader = new InputStreamReader(respBody);
             return new Gson().fromJson(inputStreamReader, responseClass);
         }

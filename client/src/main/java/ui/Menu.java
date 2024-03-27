@@ -10,6 +10,7 @@ import service.GameResponse;
 import service.LoginAndRegisterResponse;
 import static ui.EscapeSequences.*;
 
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 
@@ -76,36 +77,51 @@ public class Menu {
         scanner.nextLine();
     }
 
+    private static String handleRequiredInput(String entryType) {
+        String entry = scanner.nextLine();
+        while (entry.isEmpty()) {
+            System.out.print("You must enter value for your " + entryType + "! Enter one below.\n");
+            entry = scanner.nextLine();
+        }
+        return entry;
+    }
+
     public void handleRegisterUI() throws Exception {
 
         System.out.print("Choose your username\n");
-        String username = scanner.nextLine();
-
-        System.out.print("Enter an email\n");
-        String email = scanner.nextLine();
+        String username = handleRequiredInput("username");
 
         System.out.print("And create your password\n");
-        String password = scanner.nextLine();
+        String password = handleRequiredInput("password");
+
+        System.out.print("Enter an email\n");
+        String email = handleRequiredInput("email");
 
         LoginAndRegisterResponse res = fascade.register(new UserData(username, password, email));
-        System.out.print("Succesfully registered! Logging in...");
-
+        if (res.getMessage() != null) {
+            System.out.print(res.getMessage() + "\n");
+        }
+        else {
+            System.out.print("Succesfully registered! Logging in...");
+        }
         AuthData auth = new AuthData(res.getUsername(), res.getAuthToken());
-
         handlePostLoginUI(auth);
     }
 
     public void handleLoginUI() throws Exception {
 
         System.out.print("Enter your username\n");
-        String username = scanner.nextLine();
+        String username = handleRequiredInput("username");
 
         System.out.print("Enter your password\n");
-        String password = scanner.nextLine();
+        String password = handleRequiredInput("password");
 
         LoginAndRegisterResponse res = fascade.login(new UserData(username, password, null));
         if (res.getMessage() == null) {
             handlePostLoginUI(new AuthData(res.getUsername(), res.getAuthToken()));
+        }
+        else {
+            System.out.print(res.getMessage() + "\n");
         }
     }
 
@@ -113,22 +129,30 @@ public class Menu {
         int input = 0;
         while (input != 4) {
             System.out.print(postLoginUI);
-            input = Integer.parseInt(scanner.nextLine());
+            try {
+                input = Integer.parseInt(scanner.nextLine());
+            } catch (NumberFormatException ex) {
+                System.out.print("You must enter an integer!\n");
+                continue;
+            }
             switch(input) {
                 case 1: //Create game
                     handleCreateGameUI(auth);
                     break;
-                case 2:
+                case 2: //List games
                     handleListGamesUI(auth);
                     break;
-                case 3:
+                case 3: //Join game
                     handleJoinGameUI(auth);
                     break;
-                case 4:
+                case 4: //Logout
                     fascade.logout(auth);
                     break;
                 case 5:
                     handleHelp(postLoginHelp);
+                    break;
+                default:
+                    System.out.print("That number is not one of the valid options.\n");
                     break;
             }
         }

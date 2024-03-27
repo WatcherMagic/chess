@@ -20,7 +20,9 @@ public class SQLGameDAO implements GameDAO {
                 preparedStatement.setString(1, gameName);
                 Gson serializer = new Gson();
                 String gameJSON = serializer.toJson(new ChessGame());
+                System.out.print(gameJSON);
                 preparedStatement.setString(2, gameJSON);
+                String s = preparedStatement.toString();
                 preparedStatement.executeUpdate();
 
                 var resultSet = preparedStatement.getGeneratedKeys();

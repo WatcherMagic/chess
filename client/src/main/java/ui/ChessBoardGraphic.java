@@ -99,6 +99,7 @@ public class ChessBoardGraphic {
     }
 
     public void printBoard() {
+        updateBoardString();
         System.out.print(chessBoard);
         System.out.print(reverseBoardString());
     }
@@ -138,6 +139,7 @@ public class ChessBoardGraphic {
         }
 
         chessBoard = String.valueOf(boardCharArray);
+        chessBoard = chessBoard + SET_TEXT_COLOR_BLACK;
     }
 
     public String reverseBoardString() {
@@ -162,6 +164,7 @@ public class ChessBoardGraphic {
         }
 
         String reversed = String.valueOf(stringArray);
+        reversed = reversed + SET_TEXT_COLOR_BLACK;
         return reversed;
     }
 

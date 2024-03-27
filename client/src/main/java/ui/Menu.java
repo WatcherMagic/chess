@@ -9,8 +9,8 @@ import service.GameRequest;
 import service.GameResponse;
 import service.LoginAndRegisterResponse;
 import static ui.EscapeSequences.*;
+import ui.ChessBoardGraphic.*;
 
-import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 
@@ -103,9 +103,9 @@ public class Menu {
         }
         else {
             System.out.print("Succesfully registered! Logging in...");
+            AuthData auth = new AuthData(res.getUsername(), res.getAuthToken());
+            handlePostLoginUI(auth);
         }
-        AuthData auth = new AuthData(res.getUsername(), res.getAuthToken());
-        handlePostLoginUI(auth);
     }
 
     public void handleLoginUI() throws Exception {
@@ -178,13 +178,15 @@ public class Menu {
         if (res.getMessage() == null) {
             List<GameData> gameList = res.getGameList();
 
-            Boolean colorAlternate = false;
+            boolean colorAlternate = false;
             System.out.print("   ID   NAME\n");
             for (int i = 0; i < gameList.size(); i++) {
-                if (colorAlternate == false) {
+                if (!colorAlternate) {
                     System.out.print(SET_BG_COLOR_LIGHT_GREY);
                 }
-                System.out.print((i + 1) + " | " + gameList.get(i).gameID() + " | " + gameList.get(i).gameName() + SET_BG_COLOR_WHITE + "\n");
+                System.out.print((i + 1) + " | " + gameList.get(i).gameID() + " | " + gameList.get(i).gameName());
+                System.out.print(" | White player: " + gameList.get(i).whiteUsername());
+                System.out.print(" | Black player: " + gameList.get(i).blackUsername() + SET_BG_COLOR_WHITE + "\n");
                 colorAlternate = !colorAlternate;
             }
             System.out.print("\nPress \"Enter\" to return to the menu.\n");
@@ -197,7 +199,14 @@ public class Menu {
 
     private void handleJoinGameUI(AuthData auth) throws Exception {
         System.out.print("Enter the Game ID of the game you'd like to join:\n");
-        int id = Integer.parseInt(scanner.nextLine());
+        int id = 0;
+        while (id < 1) {
+            try {
+                id = Integer.parseInt(scanner.nextLine());
+            } catch (NumberFormatException ex) {
+                System.out.print("You must enter an integer!\n");
+            }
+        }
 
         System.out.print("Now type the word \"White\" or \"Black\" to choose your team, or leave blank to join as an observer.\n");
         String team = scanner.nextLine();
@@ -205,6 +214,28 @@ public class Menu {
         GameResponse res = fascade.joinGame(new GameRequest(null, id, team), auth);
         if (res.getMessage() == null) {
             System.out.print("You've successfully joined!\n");
+            GameListResponse listRes = fascade.listGames(auth);
+            if (listRes.getMessage() == null) {
+                List<GameData> games = listRes.getGameList();
+                GameData joined = null;
+                for (int i = 0; i < games.size(); i++) {
+                    if (games.get(i).gameID() == id) {
+                        joined = games.get(i);
+                    }
+                }
+                if (joined != null) {
+                    ChessBoardGraphic graphic = new ChessBoardGraphic(joined.chessGame().getBoard());
+                    graphic.printBoard();
+                    System.out.print("\n");
+                }
+                else {
+                    System.out.print("The id of the joined game could not be found when retrieving game data.\n");
+                }
+            }
+            else {
+                System.out.print("There was an issue retrieving the game data. " + listRes.getMessage() + "\n");
+            }
+
         }
         else {
             System.out.print(res.getMessage() + "\n");

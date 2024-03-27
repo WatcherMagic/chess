@@ -17,7 +17,11 @@ public class ChessGame {
     private ChessBoard mainBoard;
     private TeamColor teamTurn = TeamColor.WHITE;
 
-    public ChessGame() {}
+    public ChessGame() {
+        ChessBoard board = new ChessBoard();
+        board.resetBoard();
+        setBoard(board);
+    }
 
     /**
      * @return Which team's turn it is

@@ -80,7 +80,7 @@ public class DatabaseManager {
                     white_username varchar(60),
                     black_username varchar(60),
                     game_name varchar(60),
-                    game varchar(200),
+                    game blob,
                     PRIMARY KEY (id)
                 )""";
             try (var preparedStatement = conn.prepareStatement(statement)) {

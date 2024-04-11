@@ -9,7 +9,6 @@ import service.GameRequest;
 import service.GameResponse;
 import service.LoginAndRegisterResponse;
 import static ui.EscapeSequences.*;
-import ui.ChessBoardGraphic.*;
 
 import java.util.List;
 import java.util.Scanner;
